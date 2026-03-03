@@ -3,7 +3,7 @@
 A modern, performance-focused developer portfolio built with **React**, **Vite**, and **Tailwind CSS**.
 Designed with a premium glassmorphism interface, animated Canvas background, and a clean, maintainable component architecture.
 
-> 🔗 **Live Demo:** [https://your-portfolio-url.com](https://your-portfolio-url.com)
+> 🔗 **Live Demo:** ([https://your-portfolio-url.com](https://ansh-mishraportfoliodev.vercel.app/)
 
 ---
 
@@ -115,7 +115,7 @@ npm install
 npm run dev
 ```
 
-Visit: [http://localhost:5173](http://localhost:5173)
+Visit:(https://ansh-mishraportfoliodev.vercel.app/))
 
 ### Production Build
 
@@ -202,4 +202,4 @@ MIT License — free to use, modify, and distribute with attribution.
 ## Author
 
 **Ansh Mishra** — Cloud & DevOps Engineer  
-[GitHub](https://github.com/TechByAnshuu) · [LinkedIn](https://www.linkedin.com/in/ansh-mishra-dev/) · [Portfolio](https://your-portfolio-url.com)
+[GitHub](https://github.com/TechByAnshuu) · [LinkedIn](https://www.linkedin.com/in/ansh-mishra-dev/) · [Portfolio]([https://your-portfolio-url.com](https://ansh-mishraportfoliodev.vercel.app/)
