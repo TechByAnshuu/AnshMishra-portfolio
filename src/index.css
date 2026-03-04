@@ -24,6 +24,9 @@
         line-height: 1.6;
         letter-spacing: 0.2px;
         font-weight: 400;
+        /* overflow-x: clip does NOT create a block formatting context,
+           so position:sticky inside children still works correctly. */
+        overflow-x: clip;
     }
 
     h1,
@@ -71,7 +74,7 @@
     @apply bg-black/10 backdrop-blur-md border-white/10;
 }
 
-/* Smooth transitions */
-* {
+/* Smooth transitions — exclude scroll-animated elements */
+*:not([data-scroll-animated]) {
     @apply transition-colors duration-200;
 }

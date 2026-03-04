@@ -6,6 +6,7 @@ import Loading from './components/Loading';
 import ThemeToggle from './components/ThemeToggle';
 import Controller from './components/Controller';
 import MeetMe from './components/MeetMe';
+import HeroIntro from './components/HeroIntro';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
@@ -16,20 +17,15 @@ function AppContent() {
     const { theme } = useTheme();
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 1100);
-
+        const timer = setTimeout(() => setLoading(false), 1100);
         return () => clearTimeout(timer);
     }, []);
 
-    if (loading) {
-        return <Loading />;
-    }
+    if (loading) return <Loading />;
 
     return (
-        <div className="relative min-h-screen overflow-hidden">
-            {/* LiquidEther Background */}
+        <div className="relative min-h-screen">
+            {/* LiquidEther canvas — fixed z-0, HeroIntro at z-10 blocks it */}
             <div className="fixed inset-0 z-0">
                 <LiquidEther
                     colors={theme === 'dark' ? ['#B388FF'] : ['#4FC3F7']}
@@ -50,15 +46,13 @@ function AppContent() {
                 />
             </div>
 
-            {/* Theme Toggle */}
             <ThemeToggle />
-
-            {/* Navigation Controller */}
             <Controller />
 
-            {/* Main Content */}
+            {/* NOTE: NO overflow-hidden here — it would break position:sticky inside HeroIntro */}
             <main className="relative z-10">
                 <MeetMe />
+                <HeroIntro photoSrc="/ansh.jpg" />
                 <Skills />
                 <Projects />
                 <Experience />
