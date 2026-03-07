@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useRef } from "react";
+import { useTheme } from "../ThemeContext";
 
 /* ─── Math helpers ───────────────────────────────────────────────── */
 const cl = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -46,14 +47,7 @@ const CODE = [
     { t: "comment", a: "", b: "" },
     { t: "output", a: "> Status: Online & Building 🚀", b: "" },
 ];
-const CLR = {
-    comment: "rgba(100,116,139,.65)",
-    keyword: "rgba(139,92,246,.96)",
-    code: "rgba(186,230,253,.88)",
-    string: "rgba(110,231,183,.92)",
-    output: "rgba(99,179,237,1)",
-    cursor: "rgba(139,92,246,.9)",
-};
+
 
 /* ─── Deterministic particles (right half only) ──────────────────── */
 const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
@@ -66,11 +60,15 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
    COMPONENT
 ════════════════════════════════════════════════════════════════════ */
 export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const secRef = useRef(null);
     const stickerRef = useRef(null);
     const nameRef = useRef(null);
     const termRef = useRef(null);
     const entryRef = useRef(null);
+    const cursorRef = useRef(null);  /* purple glow orb that follows cursor */
+    const stickyRef = useRef(null);  /* sticky panel — needed for mouse offset */
     const lineRefs = useRef([]);
     const raf = useRef(null);
 
@@ -207,8 +205,78 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
         };
     }, []);
 
-    const BG = "#050d1f";
-    const BGGRAD = "linear-gradient(145deg,#060e22 0%,#080f20 55%,#050b1a 100%)";
+    /* ── Cursor glow: purple orb follows mouse inside the section ─── */
+    useEffect(() => {
+        const panel = stickyRef.current;
+        if (!panel) return;
+        const onMove = (e) => {
+            const g = cursorRef.current;
+            if (!g) return;
+            const r = panel.getBoundingClientRect();
+            g.style.left = `${e.clientX - r.left}px`;
+            g.style.top = `${e.clientY - r.top}px`;
+            g.style.opacity = "1";
+        };
+        const onLeave = () => {
+            const g = cursorRef.current;
+            if (g) g.style.opacity = "0";
+        };
+        panel.addEventListener("mousemove", onMove, { passive: true });
+        panel.addEventListener("mouseleave", onLeave);
+        return () => {
+            panel.removeEventListener("mousemove", onMove);
+            panel.removeEventListener("mouseleave", onLeave);
+        };
+    }, []);
+
+    /* ── Theme-aware colors ── mirrors all other sections ──────────
+       Light: bg-white,  accent=#0F2854  (matches MeetMe h1 / Skills headings)
+       Dark:  transparent, accent=#B388FF (LiquidEther canvas purple, App.jsx)  */
+    const BG = isDark ? "transparent" : "#ffffff";
+    const BGGRAD = "transparent";   /* body/LiquidEther always shows through */
+
+    const ACC = isDark ? "#B388FF" : "#0F2854";
+    const ACC_R = isDark ? "179,136,255" : "15,40,84";
+
+    /* ── Single-source-of-truth theme palette ──────────────────────── */
+    const COLORS = {
+        /* Entry overlay — matches --background per theme, prevents flash */
+        entryBg: isDark ? "#000000" : "#ffffff",
+
+        /* "Ansh Mishra" name — matches MeetMe <h1> per theme */
+        name: isDark ? "rgba(255,255,255,.92)" : "#0F2854",
+        nameGlow: isDark ? `0 0 80px rgba(${ACC_R},.50), 0 0 160px rgba(${ACC_R},.20)`
+            : `0 0 40px rgba(${ACC_R},.15)`,
+
+        /* Terminal card glass */
+        termBg: isDark ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.80)",
+        termBorder: isDark ? "1px solid rgba(255,255,255,0.10)"
+            : "1px solid rgba(15,40,84,0.12)",
+        termShadow: isDark
+            ? `0 0 32px rgba(${ACC_R},.08), 0 20px 56px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)`
+            : `0 0 24px rgba(${ACC_R},.06), 0 16px 40px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.80)`,
+        termDivider: `1px solid rgba(${ACC_R},.10)`,
+
+        /* Code syntax */
+        code: isDark ? {
+            comment: "rgba(100,116,139,.60)",
+            keyword: "rgba(179,136,255,.95)",
+            code: "rgba(203,213,225,.82)",
+            string: "rgba(110,231,183,.88)",
+            output: "rgba(147,197,253,.95)",
+            cursor: "rgba(179,136,255,.90)",
+        } : {
+            comment: "#6B7280",   /* slate-500    — muted, not distracting          */
+            keyword: "#1D4ED8",   /* blue-700     — bold keyword pop                */
+            code: "#111827",   /* gray-900     — variables/property names, legible */
+            string: "#047857",   /* emerald-700  — rich green strings              */
+            output: "#0F2854",   /* site navy    — status / output line            */
+            cursor: "#7C3AED",   /* violet-700   — distinguished cursor/function   */
+        },
+    };
+    /* Shorthand so existing CLR references keep working */
+    const CLR = COLORS.code;
+
 
     return (
         <>
@@ -228,7 +296,6 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                     5%,95% { opacity: 0.06; }
                     100%   { top: 100%; opacity: 0; }
                 }
-                @keyframes hi-blink {
                     0%,49%  { opacity: 1; }
                     50%,100%{ opacity: 0; }
                 }
@@ -243,25 +310,47 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                 style={{
                     position: "relative",
                     height: "320vh",
-                    background: BG,
+                    /* NO background, NO isolation — lets LiquidEther fixed canvas show through */
                     zIndex: 10,
-                    isolation: "isolate",
                 }}
             >
                 {/* Sticky viewport panel */}
-                <div style={{
-                    position: "sticky",
-                    top: 0,
-                    height: "100vh",
-                    overflow: "hidden",
-                    background: BGGRAD,
-                    zIndex: 1,
-                }}>
+                {/* Sticky viewport panel */}
+                <div
+                    ref={stickyRef}
+                    style={{
+                        position: "sticky",
+                        top: 0,
+                        height: "100vh",
+                        /* overflow:hidden removed — it clips position:fixed descendants */
+                        background: BGGRAD,
+                        zIndex: 1,
+                    }}
+                >
+                    {/* ── Cursor glow ── site blue #93C5FD, matches all other sections ── */}
+                    <div
+                        ref={cursorRef}
+                        aria-hidden
+                        style={{
+                            position: "absolute",
+                            width: 480, height: 480,
+                            borderRadius: "50%",
+                            /* Cursor glow — matches LiquidEther per-theme */
+                            background: `radial-gradient(circle, rgba(${ACC_R},.18) 0%, rgba(${ACC_R},.05) 42%, transparent 70%)`,
+                            transform: "translate(-50%,-50%)",
+                            pointerEvents: "none",
+                            zIndex: 5,
+                            opacity: 0,
+                            transition: "opacity .35s ease",
+                            willChange: "left,top",
+                        }}
+                    />
 
-                    {/* ── PHASE 0: Black entry overlay ── */}
+                    {/* ── PHASE 0: Entry overlay — matches site bg per-theme, no flash ── */}
                     <div ref={entryRef} aria-hidden style={{
                         position: "absolute", inset: 0, zIndex: 60,
-                        background: "#000000", pointerEvents: "none",
+                        background: COLORS.entryBg,
+                        pointerEvents: "none",
                         opacity: 1,
                     }} />
 
@@ -273,15 +362,29 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                         backgroundSize: "170px",
                     }} />
 
-                    {/* ── Ambient right glow ── */}
+                    {/* ── Ambient glows — mimic LiquidEther canvas colors ──────────
+                        LiquidEther uses: #5227FF (indigo), #FF9FFC (pink), #B19EEF (lavender)
+                        We use the indigo+lavender to match what the eye sees in MeetMe/Skills */}
+
+                    {/* Ambient glows — theme-aware: purple in dark, navy in light */}
                     <div aria-hidden style={{
-                        position: "absolute", right: "-8%", top: "5%",
-                        width: "60vw", height: "90vh", borderRadius: "50%",
-                        background: "radial-gradient(ellipse,rgba(99,102,241,.22) 0%,rgba(79,70,229,.07) 45%,transparent 72%)",
-                        filter: "blur(90px)", zIndex: 1, pointerEvents: "none",
+                        position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
+                        background: `radial-gradient(circle at 70% 40%, rgba(${ACC_R},0.10), transparent 60%)`,
+                    }} />
+                    <div aria-hidden style={{
+                        position: "absolute", right: "-10%", top: "0%",
+                        width: "65vw", height: "100vh", borderRadius: "50%",
+                        background: `radial-gradient(ellipse,rgba(${ACC_R},.10) 0%,rgba(${ACC_R},.03) 45%,transparent 72%)`,
+                        filter: "blur(100px)", zIndex: 1, pointerEvents: "none",
+                    }} />
+                    <div aria-hidden style={{
+                        position: "absolute", left: "-5%", bottom: "0%",
+                        width: "40vw", height: "60vh", borderRadius: "50%",
+                        background: `radial-gradient(ellipse,rgba(${ACC_R},.06) 0%,transparent 65%)`,
+                        filter: "blur(70px)", zIndex: 1, pointerEvents: "none",
                     }} />
 
-                    {/* ── Particles ── */}
+                    {/* ── Particles — LiquidEther lavender tones ── */}
                     <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none" }}>
                         {PARTICLES.map(pt => (
                             <div key={pt.id} style={{
@@ -289,7 +392,7 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                                 left: `${pt.x}%`, top: `${pt.y}%`,
                                 width: `${pt.s}px`, height: `${pt.s}px`,
                                 borderRadius: "50%",
-                                background: pt.s > 1.3 ? "rgba(139,92,246,.5)" : "rgba(186,230,253,.3)",
+                                background: `rgba(${ACC_R},${pt.s > 1.3 ? '.35' : '.15'})`,
                                 "--op": pt.op, opacity: pt.op,
                                 animation: `hi-twinkle ${pt.dur}s ease-in-out ${pt.del}s infinite`,
                             }} />
@@ -320,16 +423,15 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                             /* Big enough to bleed out from behind the photo */
                             fontSize: "clamp(3.5rem, 11vw, 11rem)",
                             fontWeight: 900,
-                            /* Bright white — visible on both sides of the photo */
-                            color: "rgba(255,255,255,0.92)",
+                            /* Matches MeetMe h1: #0F2854 light / white dark */
+                            color: COLORS.name,
                             letterSpacing: "0.18em",
                             lineHeight: 1,
                             textAlign: "center",
                             userSelect: "none",
                             textTransform: "uppercase",
                             margin: 0,
-                            /* Subtle glow */
-                            textShadow: "0 0 80px rgba(99,102,241,0.5), 0 0 160px rgba(139,92,246,0.3)",
+                            textShadow: COLORS.nameGlow,
                             whiteSpace: "nowrap",
                         }}>
                             Ansh Mishra
@@ -409,21 +511,37 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                     >
                         <div style={{
                             width: "100%", maxWidth: 460,
-                            background: "rgba(3,7,20,.94)",
-                            backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
-                            border: "1px solid rgba(99,102,241,.20)",
+                            /* GLASSMORPHISM — matches .glass / .dark .glass from index.css
+                               Light: bg-white/80 + border-black/10
+                               Dark:  bg-black/10 + border-white/10                        */
+                            background: COLORS.termBg,
+                            backdropFilter: "blur(8px)",
+                            WebkitBackdropFilter: "blur(8px)",
+                            border: COLORS.termBorder,
                             borderRadius: 16, padding: "20px 22px 24px",
                             position: "relative", overflow: "hidden",
-                            boxShadow: "0 8px 40px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.04)",
+                            /* Layered depth shadows — gives floating premium feel */
+                            boxShadow: isDark
+                                ? `0 0 32px rgba(${ACC_R},.08), 0 24px 48px rgba(0,0,0,.60), 0 8px 16px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.08)`
+                                : `0 0 24px rgba(${ACC_R},.06), 0 20px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.90)`,
                         }}>
                             {/* Mac dots */}
                             <div style={{
                                 display: "flex", alignItems: "center",
                                 gap: 6, marginBottom: 16, paddingBottom: 12,
-                                borderBottom: "1px solid rgba(99,102,241,.10)",
+                                borderBottom: COLORS.termDivider,
                             }}>
-                                {["rgba(255,95,87,.85)", "rgba(255,189,46,.85)", "rgba(40,200,64,.85)"].map((c, i) => (
-                                    <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />
+                                {/* Mac traffic-light dots — pixel-perfect colors + depth shadow */}
+                                {[
+                                    { bg: "#ff5f56", shadow: "rgba(255,95,86,.40)" },
+                                    { bg: "#ffbd2e", shadow: "rgba(255,189,46,.40)" },
+                                    { bg: "#27c93f", shadow: "rgba(39,201,63,.40)" },
+                                ].map(({ bg, shadow }, i) => (
+                                    <div key={i} style={{
+                                        width: 11, height: 11, borderRadius: "50%",
+                                        background: bg,
+                                        boxShadow: `0 1px 3px ${shadow}, 0 0 0 0.5px rgba(0,0,0,.15)`,
+                                    }} />
                                 ))}
                                 <span style={{
                                     fontFamily: "'JetBrains Mono',monospace",
@@ -435,20 +553,28 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                             </div>
                             {/* Code */}
                             <div style={{
+                                /* Code block — JetBrains Mono for authentic developer feel */
                                 fontFamily: "'JetBrains Mono',monospace",
-                                fontSize: "clamp(.56rem,.82vw,.7rem)",
-                                lineHeight: 1.88,
+                                fontSize: 13,            /* comfortable reading size            */
+                                lineHeight: 1.75,        /* breathing room between lines        */
                             }}>
                                 {CODE.map((line, i) => (
                                     <div key={i} ref={el => { lineRefs.current[i] = el; }} style={{
                                         opacity: 0, transform: "translateY(10px)",
                                         willChange: "opacity,transform",
                                         display: "flex", alignItems: "baseline",
-                                        minHeight: line.a === "" ? ".7em" : "auto",
+                                        minHeight: line.a === "" ? "1.1em" : "auto",
+                                        /* Highlight the last/active typing line */
+                                        background: i === CODE.length - 1
+                                            ? `rgba(${ACC_R},0.06)`
+                                            : "transparent",
+                                        borderRadius: 4,
+                                        paddingLeft: 2, marginLeft: -2,
                                     }}>
                                         <span style={{
-                                            color: "rgba(71,85,105,.36)", fontSize: ".67em",
-                                            marginRight: 13, minWidth: 18, textAlign: "right",
+                                            color: isDark ? "rgba(71,85,105,.45)" : "rgba(71,85,105,.55)",
+                                            fontSize: 11,
+                                            marginRight: 14, minWidth: 18, textAlign: "right",
                                             userSelect: "none", flexShrink: 0,
                                         }}>
                                             {line.a !== "" ? i + 1 : ""}
@@ -469,27 +595,33 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                                     </div>
                                 ))}
                             </div>
-                            {/* Scan line */}
+                            {/* Scan line — theme-aware tint */}
                             <div aria-hidden style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", borderRadius: 16 }}>
                                 <div style={{
                                     position: "absolute", left: 0, right: 0, height: 2,
-                                    background: "linear-gradient(to right,transparent,rgba(99,102,241,.07),transparent)",
+                                    background: `linear-gradient(to right,transparent,rgba(${ACC_R},.06),transparent)`,
                                     animation: "hi-scan 8s linear infinite",
                                 }} />
                             </div>
-                            {/* Inner glow */}
+                            {/* Inner bottom glow — theme-aware */}
                             <div aria-hidden style={{
                                 position: "absolute", bottom: "-25%", left: "5%", right: "5%", height: "48%",
-                                background: "radial-gradient(ellipse,rgba(99,102,241,.10) 0%,transparent 70%)",
+                                background: `radial-gradient(ellipse,rgba(${ACC_R},.06) 0%,transparent 70%)`,
                                 filter: "blur(26px)", pointerEvents: "none",
                             }} />
                         </div>
                     </div>
 
-                    {/* Top blend */}
+                    {/* ── TOP blend — fades into site background above the section ── */}
                     <div aria-hidden style={{
-                        position: "absolute", top: 0, left: 0, right: 0, height: 68,
-                        background: `linear-gradient(to bottom,${BG},transparent)`,
+                        position: "absolute", top: 0, left: 0, right: 0, height: 90,
+                        background: "linear-gradient(to bottom,#000000 0%,transparent 100%)",
+                        zIndex: 55, pointerEvents: "none",
+                    }} />
+                    {/* ── BOTTOM blend — fades into site background below the section ── */}
+                    <div aria-hidden style={{
+                        position: "absolute", bottom: 0, left: 0, right: 0, height: 90,
+                        background: "linear-gradient(to top,#000000 0%,transparent 100%)",
                         zIndex: 55, pointerEvents: "none",
                     }} />
 
