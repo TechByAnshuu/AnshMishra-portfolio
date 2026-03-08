@@ -1,235 +1,364 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { GraduationCap, Code2, Globe, Layers, Cloud, Rocket } from 'lucide-react';
+import {
+    motion,
+    useInView,
+    useScroll,
+    useTransform,
+} from 'framer-motion';
+import {
+    GraduationCap,
+    Code2,
+    Globe,
+    Layers,
+    Cloud,
+    Rocket,
+} from 'lucide-react';
 
-/* ─── Timeline data ─── */
+/* ─────────────────────────────────────────
+   Data
+───────────────────────────────────────── */
 const milestones = [
     {
         year: '2023',
         label: 'B.Tech Begins',
         title: 'Started B.Tech',
-        body: 'Began my journey in Computer Science. Dived into programming fundamentals, logic building, and problem-solving that would shape everything ahead.',
+        body: 'Began my Computer Science journey — diving deep into programming fundamentals, logic building, and problem-solving.',
         Icon: GraduationCap,
+        color: { ring: '#60A5FA', glow: 'rgba(96,165,250,0.55)' },
         side: 'left',
     },
     {
         year: '2023',
         label: 'Core CS',
         title: 'Programming Basics',
-        body: 'Learned C programming, algorithms, and data structures fundamentals — the bedrock of every great software engineer.',
+        body: 'Mastered C programming, algorithms, and data structures — the bedrock of every great software engineer.',
         Icon: Code2,
+        color: { ring: '#A78BFA', glow: 'rgba(167,139,250,0.55)' },
         side: 'right',
     },
     {
         year: '2024',
         label: 'Building the Web',
         title: 'Web Development',
-        body: 'Picked up HTML, CSS, and modern JavaScript. Started building interactive, responsive websites from scratch.',
+        body: 'Picked up HTML, CSS & modern JavaScript. Started building interactive, responsive websites from scratch.',
         Icon: Globe,
+        color: { ring: '#34D399', glow: 'rgba(52,211,153,0.55)' },
         side: 'left',
     },
     {
         year: '2024',
         label: 'React & UI/UX',
         title: 'Frontend Frameworks',
-        body: 'Built projects with React.js, explored Tailwind CSS, and developed a sharp eye for polished UI/UX design.',
+        body: 'Built polished apps with React.js and Tailwind CSS, and developed a sharp eye for great UI/UX.',
         Icon: Layers,
+        color: { ring: '#F472B6', glow: 'rgba(244,114,182,0.55)' },
         side: 'right',
     },
     {
         year: '2025',
-        label: 'Going Cloud-native',
+        label: 'Cloud-native',
         title: 'DevOps & Cloud',
-        body: 'Embraced Docker, Kubernetes, CI/CD pipelines, and AWS. Automated deployments and built infrastructure-as-code for real systems.',
+        body: 'Embraced Docker, Kubernetes, CI/CD pipelines, and AWS — automating deployments for real production systems.',
         Icon: Cloud,
+        color: { ring: '#FBBF24', glow: 'rgba(251,191,36,0.55)' },
         side: 'left',
     },
     {
         year: 'Now',
         label: 'Shipping to Prod',
         title: 'Advanced Projects',
-        body: 'Building production-grade full-stack and DevOps projects — contributing to open-source and solving real-world engineering problems.',
+        body: 'Building production-grade full-stack & DevOps projects — contributing to open-source and solving real engineering problems.',
         Icon: Rocket,
+        color: { ring: '#38BDF8', glow: 'rgba(56,189,248,0.55)' },
         side: 'right',
     },
 ];
 
-/* ─── Animated card ─── */
-function TimelineCard({ item, index }) {
-    const ref = useRef(null);
-    // once: false → re-animates when scrolling back up
-    const inView = useInView(ref, { once: false, margin: '-80px' });
-    const isLeft = item.side === 'left';
+/* ─────────────────────────────────────────
+   Animated scroll progress bar (desktop)
+───────────────────────────────────────── */
+function ProgressLine({ containerRef }) {
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start 80%', 'end 20%'],
+    });
+    const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
     return (
-        <div ref={ref} className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-0">
-
-            {/* ── LEFT slot ── */}
-            <div className="flex justify-end pr-8 md:pr-12">
-                {isLeft ? (
-                    <motion.div
-                        initial={{ opacity: 0, x: -56 }}
-                        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -56 }}
-                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-                        className="max-w-xs w-full"
-                    >
-                        <Card item={item} />
-                    </motion.div>
-                ) : (
-                    <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                        transition={{ duration: 0.4, delay: 0.2 }}
-                        className="text-xs font-mono tracking-widest text-foreground/20 self-center select-none"
-                    >
-                        {item.year}
-                    </motion.span>
-                )}
-            </div>
-
-            {/* ── Centre node ── */}
+        /* Track line (faint) */
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] pointer-events-none hidden md:block">
+            {/* Static track */}
+            <div className="absolute inset-0 bg-gradient-to-b
+                            from-transparent
+                            via-[#0F2854]/20 dark:via-[#93C5FD]/20
+                            to-transparent" />
+            {/* Animated fill */}
             <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-                transition={{ duration: 0.45, ease: 'backOut', delay: 0.02 }}
-                className="flex flex-col items-center z-10"
-            >
-                <GlowNode Icon={item.Icon} index={index} />
-            </motion.div>
-
-            {/* ── RIGHT slot ── */}
-            <div className="flex justify-start pl-8 md:pl-12">
-                {!isLeft ? (
-                    <motion.div
-                        initial={{ opacity: 0, x: 56 }}
-                        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 56 }}
-                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-                        className="max-w-xs w-full"
-                    >
-                        <Card item={item} />
-                    </motion.div>
-                ) : (
-                    <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                        transition={{ duration: 0.4, delay: 0.2 }}
-                        className="text-xs font-mono tracking-widest text-foreground/20 self-center select-none"
-                    >
-                        {item.year}
-                    </motion.span>
-                )}
-            </div>
-        </div>
-    );
-}
-
-/* ─── Glowing node ─── */
-const nodeColors = [
-    { ring: '#60A5FA', glow: 'rgba(96,165,250,0.4)' },
-    { ring: '#A78BFA', glow: 'rgba(167,139,250,0.4)' },
-    { ring: '#34D399', glow: 'rgba(52,211,153,0.4)' },
-    { ring: '#F472B6', glow: 'rgba(244,114,182,0.4)' },
-    { ring: '#FBBF24', glow: 'rgba(251,191,36,0.4)' },
-    { ring: '#38BDF8', glow: 'rgba(56,189,248,0.4)' },
-];
-
-function GlowNode({ Icon, index }) {
-    const color = nodeColors[index % nodeColors.length];
-    return (
-        <div className="relative flex items-center justify-center">
-            {/* Pulse ring */}
-            <span
-                className="absolute w-14 h-14 rounded-full animate-ping opacity-15"
-                style={{ backgroundColor: color.ring }}
+                className="absolute inset-x-0 top-0 origin-top rounded-full
+                           bg-gradient-to-b
+                           from-[#60A5FA] via-[#A78BFA] to-[#38BDF8]"
+                style={{ scaleY, bottom: 0 }}
             />
-            {/* Node circle */}
-            <div
-                className="relative w-12 h-12 rounded-full flex items-center justify-center
-                           bg-white/10 dark:bg-black/20 backdrop-blur-sm border-2"
-                style={{
-                    boxShadow: `0 0 20px ${color.glow}, 0 0 6px ${color.glow}`,
-                    borderColor: color.ring,
-                }}
-            >
-                <Icon
-                    className="w-5 h-5"
-                    style={{ color: color.ring }}
-                    strokeWidth={1.75}
-                />
-            </div>
         </div>
     );
 }
 
-/* ─── Card ─── */
-function Card({ item }) {
+/* ─────────────────────────────────────────
+   Node
+───────────────────────────────────────── */
+function Node({ item, active }) {
+    const { Icon, color } = item;
     return (
-        <div className="group relative rounded-2xl p-5
-                        glass border border-white/30 dark:border-white/10
-                        shadow-lg hover:shadow-2xl
-                        hover:-translate-y-1 hover:border-white/50 dark:hover:border-white/20
-                        transition-all duration-400 ease-out">
+        <div className="relative flex items-center justify-center flex-shrink-0 z-10">
+            {/* Pulse ring — only when active */}
+            {active && (
+                <span
+                    className="absolute w-16 h-16 rounded-full animate-ping opacity-20"
+                    style={{ backgroundColor: color.ring }}
+                />
+            )}
+            {/* Glow halo */}
+            <motion.div
+                animate={active
+                    ? { boxShadow: `0 0 22px ${color.glow}, 0 0 8px ${color.glow}` }
+                    : { boxShadow: '0 0 0px transparent' }
+                }
+                transition={{ duration: 0.4 }}
+                className="relative w-11 h-11 rounded-full flex items-center justify-center
+                           bg-white/10 dark:bg-black/25 backdrop-blur-sm border-2 transition-colors duration-400"
+                style={{ borderColor: active ? color.ring : `${color.ring}55` }}
+            >
+                <motion.div
+                    animate={active ? { scale: 1.15 } : { scale: 1 }}
+                    transition={{ duration: 0.35, ease: 'backOut' }}
+                >
+                    <Icon
+                        className="w-5 h-5 transition-colors duration-400"
+                        style={{ color: active ? color.ring : `${color.ring}90` }}
+                        strokeWidth={1.75}
+                    />
+                </motion.div>
+            </motion.div>
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────
+   Card
+───────────────────────────────────────── */
+function Card({ item, active }) {
+    const { color } = item;
+    return (
+        <motion.div
+            animate={active
+                ? { borderColor: `${color.ring}50`, boxShadow: `0 8px 32px ${color.glow}25` }
+                : { borderColor: 'rgba(255,255,255,0.15)', boxShadow: '0 4px 16px transparent' }
+            }
+            transition={{ duration: 0.4 }}
+            className="group relative rounded-2xl p-5
+                       bg-white/10 dark:bg-black/15 backdrop-blur-md
+                       border hover:-translate-y-1 hover:shadow-xl
+                       transition-transform duration-300 ease-out w-full"
+        >
+            {/* Year + label row */}
             <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-mono font-semibold tracking-widest uppercase
-                                 text-[#0F2854]/50 dark:text-[#93C5FD]/45">
+                <span
+                    className="text-[10px] font-mono font-bold tracking-widest uppercase"
+                    style={{ color: color.ring }}
+                >
                     {item.year}
                 </span>
-                <span className="flex-1 h-px bg-gradient-to-r from-[#0F2854]/15 dark:from-[#93C5FD]/15 to-transparent" />
+                <span className="flex-1 h-px bg-gradient-to-r from-white/15 to-transparent" />
                 <span className="text-[10px] font-mono text-foreground/35 tracking-wide">{item.label}</span>
             </div>
 
-            <h3 className="text-base font-heading font-semibold text-[#0F2854] dark:text-[#93C5FD] mb-2 leading-snug">
+            <h3 className="text-[15px] font-heading font-semibold text-[#0F2854] dark:text-[#93C5FD] mb-1.5 leading-snug">
                 {item.title}
             </h3>
-
-            <p className="text-sm text-foreground/65 leading-relaxed">
+            <p className="text-sm text-foreground/60 leading-relaxed">
                 {item.body}
             </p>
-        </div>
-    );
-}
-
-/* ─── Connector between nodes ─── */
-function Connector({ isLast }) {
-    if (isLast) return null;
-    return (
-        <div className="col-start-2 col-end-3 flex justify-center">
-            <div className="w-px h-14 bg-gradient-to-b from-white/25 dark:from-white/15 to-transparent" />
-        </div>
-    );
-}
-
-/* ─── "Journey Begins" entry label ─── */
-function JourneyStart() {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: false, margin: '-40px' });
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: -12 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="flex flex-col items-center gap-2 mb-4"
-        >
-            <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-foreground/35
-                             border border-white/20 dark:border-white/10 rounded-full px-4 py-1 glass">
-                Journey Begins
-            </span>
-            <div className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent" />
         </motion.div>
     );
 }
 
-/* ─── Main export ─── */
+/* ─────────────────────────────────────────
+   Connector line (node ↔ card)
+───────────────────────────────────────── */
+function Connector({ side, active, color }) {
+    return (
+        <motion.div
+            animate={active ? { opacity: 1, scaleX: 1 } : { opacity: 0.25, scaleX: 0.6 }}
+            transition={{ duration: 0.4 }}
+            style={{
+                backgroundColor: color.ring,
+                transformOrigin: side === 'left' ? 'right center' : 'left center',
+            }}
+            className="flex-shrink-0 h-[1.5px] w-10 md:w-14 rounded-full"
+        />
+    );
+}
+
+/* ─────────────────────────────────────────
+   Milestone row (desktop alternating)
+───────────────────────────────────────── */
+function MilestoneRow({ item, index }) {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: false, margin: '-25% 0px -25% 0px' });
+    const isLeft = item.side === 'left';
+
+    const cardMotion = {
+        initial: { opacity: 0, x: isLeft ? -70 : 70 },
+        animate: inView
+            ? { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.05 } }
+            : { opacity: 0, x: isLeft ? -70 : 70, transition: { duration: 0.4 } },
+    };
+
+    const nodeMotion = {
+        initial: { scale: 0, opacity: 0 },
+        animate: inView
+            ? { scale: 1, opacity: 1, transition: { duration: 0.45, ease: 'backOut' } }
+            : { scale: 0, opacity: 0, transition: { duration: 0.3 } },
+    };
+
+    return (
+        <div ref={ref} className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center gap-0">
+
+            {/* LEFT SLOT */}
+            <div className="flex items-center justify-end gap-0 pr-0">
+                {isLeft ? (
+                    <div className="flex items-center gap-0 w-full justify-end">
+                        <motion.div className="max-w-[280px] w-full" {...cardMotion}>
+                            <Card item={item} active={inView} />
+                        </motion.div>
+                        <Connector side="left" active={inView} color={item.color} />
+                    </div>
+                ) : (
+                    <span className="text-[10px] font-mono tracking-widest text-foreground/20 select-none pr-6">
+                        {item.year}
+                    </span>
+                )}
+            </div>
+
+            {/* CENTRE NODE */}
+            <motion.div className="flex items-center justify-center" {...nodeMotion}>
+                <Node item={item} active={inView} />
+            </motion.div>
+
+            {/* RIGHT SLOT */}
+            <div className="flex items-center justify-start gap-0 pl-0">
+                {!isLeft ? (
+                    <div className="flex items-center gap-0 w-full justify-start">
+                        <Connector side="right" active={inView} color={item.color} />
+                        <motion.div className="max-w-[280px] w-full" {...cardMotion}>
+                            <Card item={item} active={inView} />
+                        </motion.div>
+                    </div>
+                ) : (
+                    <span className="text-[10px] font-mono tracking-widest text-foreground/20 select-none pl-6">
+                        {item.year}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────
+   Mobile single-column row
+───────────────────────────────────────── */
+function MobileMilestoneRow({ item }) {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: false, margin: '-15% 0px -15% 0px' });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, x: -30 }}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-start gap-4 md:hidden"
+        >
+            {/* Left: node on line */}
+            <div className="flex flex-col items-center flex-shrink-0">
+                <Node item={item} active={inView} />
+            </div>
+            {/* Right: card */}
+            <div className="flex-1 pb-2">
+                <Card item={item} active={inView} />
+            </div>
+        </motion.div>
+    );
+}
+
+/* ─────────────────────────────────────────
+   Journey starts label
+───────────────────────────────────────── */
+function JourneyStart() {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: false, margin: '-20px' });
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: -10 }}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-2 mb-6"
+        >
+            <span className="text-[11px] font-mono tracking-[0.2em] uppercase text-foreground/40
+                             border border-white/20 dark:border-white/10 rounded-full px-4 py-1
+                             bg-white/10 dark:bg-black/15 backdrop-blur-sm">
+                Journey Begins
+            </span>
+            <div className="w-px h-6 bg-gradient-to-b from-white/40 to-transparent" />
+        </motion.div>
+    );
+}
+
+/* ─────────────────────────────────────────
+   Mobile left vertical line
+───────────────────────────────────────── */
+function MobileProgressLine({ containerRef }) {
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start 80%', 'end 20%'],
+    });
+    const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+    return (
+        <div className="absolute left-[21px] top-0 bottom-0 w-[2px] pointer-events-none md:hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0F2854]/20 dark:via-[#93C5FD]/20 to-transparent" />
+            <motion.div
+                className="absolute inset-x-0 top-0 origin-top rounded-full
+                           bg-gradient-to-b from-[#60A5FA] via-[#A78BFA] to-[#38BDF8]"
+                style={{ scaleY, bottom: 0 }}
+            />
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────
+   Section gap between rows
+───────────────────────────────────────── */
+function RowGap() {
+    return <div className="hidden md:block h-10" />;
+}
+
+/* ─────────────────────────────────────────
+   Main export
+───────────────────────────────────────── */
 export default function Education() {
+    const sectionRef = useRef(null);
+    const timelineRef = useRef(null);
+
     const headerRef = useRef(null);
     const headerInView = useInView(headerRef, { once: false, margin: '-60px' });
 
     return (
-        <section id="education" className="min-h-screen py-24 px-4 md:px-8 overflow-hidden">
+        <section ref={sectionRef} id="education" className="min-h-screen py-24 px-4 md:px-8 overflow-hidden">
             <div className="max-w-5xl mx-auto">
 
-                {/* Section header */}
+                {/* ── Header ── */}
                 <motion.div
                     ref={headerRef}
                     initial={{ opacity: 0, y: 28 }}
@@ -244,28 +373,36 @@ export default function Education() {
                         My Journey
                     </h2>
                     <p className="mt-4 text-base text-foreground/55 max-w-lg mx-auto leading-relaxed">
-                        A look at the key milestones during my B.Tech journey and what I learned along the way.
+                        Key milestones from my B.Tech journey and the skills I built along the way.
                     </p>
                     <div className="mt-5 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-[#0F2854]/60 to-[#93C5FD]/60" />
                 </motion.div>
 
-                {/* Timeline */}
-                <div className="relative">
-                    {/* Vertical centre line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] pointer-events-none
-                                    bg-gradient-to-b
-                                    from-transparent
-                                    via-[#0F2854]/50 dark:via-[#93C5FD]/45
-                                    to-transparent" />
+                {/* ── Timeline ── */}
+                <div ref={timelineRef} className="relative">
+
+                    {/* Desktop animated progress line */}
+                    <ProgressLine containerRef={timelineRef} />
+
+                    {/* Mobile animated progress line */}
+                    <MobileProgressLine containerRef={timelineRef} />
 
                     <JourneyStart />
 
-                    <div className="flex flex-col gap-10">
+                    {/* Desktop rows */}
+                    <div className="hidden md:flex flex-col gap-0">
                         {milestones.map((item, i) => (
-                            <div key={i}>
-                                <TimelineCard item={item} index={i} />
-                                <Connector isLast={i === milestones.length - 1} />
+                            <div key={item.title}>
+                                <MilestoneRow item={item} index={i} />
+                                {i < milestones.length - 1 && <RowGap />}
                             </div>
+                        ))}
+                    </div>
+
+                    {/* Mobile rows */}
+                    <div className="flex flex-col gap-6 md:hidden pl-1">
+                        {milestones.map((item) => (
+                            <MobileMilestoneRow key={item.title} item={item} />
                         ))}
                     </div>
                 </div>
