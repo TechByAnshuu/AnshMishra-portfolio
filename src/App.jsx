@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './ThemeContext';
 import LiquidEther from './components/LiquidEther';
 import { useTheme } from './ThemeContext';
@@ -11,6 +12,8 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import Socials from './components/Socials';
+import AllProjectsPage from './pages/AllProjects';
+import Education from './components/Education';
 
 function AppContent() {
     const [loading, setLoading] = useState(true);
@@ -54,6 +57,7 @@ function AppContent() {
                 <MeetMe />
                 <HeroIntro photoSrc="/ansh.jpg" />
                 <Skills />
+                <Education />
                 <Projects />
                 <Experience />
                 <Socials />
@@ -65,7 +69,10 @@ function AppContent() {
 export default function App() {
     return (
         <ThemeProvider>
-            <AppContent />
+            <Routes>
+                <Route path="/" element={<AppContent />} />
+                <Route path="/projects" element={<AllProjectsPage />} />
+            </Routes>
         </ThemeProvider>
     );
 }

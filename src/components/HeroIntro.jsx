@@ -460,7 +460,7 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                             transformOrigin: "center bottom",
                             overflow: "hidden",  /* needed for border-radius to clip the img */
                             /* Card shadow (fades as border-radius goes to 0) */
-                            boxShadow: "0 24px 60px rgba(0,0,0,0.7)",
+                            // boxShadow: "0 24px 60px rgba(0,0,0,0.7)",
                         }}
                     >
                         <img
