@@ -14,6 +14,9 @@ import Experience from './components/Experience';
 import Socials from './components/Socials';
 import AllProjectsPage from './pages/AllProjects';
 import Education from './components/Education';
+import CodingActivity from './components/CodingActivity';
+import Achievements from './components/Achievements';
+import Navbar from './components/Navbar';
 
 function AppContent() {
     const [loading, setLoading] = useState(true);
@@ -49,7 +52,7 @@ function AppContent() {
                 />
             </div>
 
-            <ThemeToggle />
+            <Navbar />
             <Controller />
 
             {/* NOTE: NO overflow-hidden here — it would break position:sticky inside HeroIntro */}
@@ -60,6 +63,8 @@ function AppContent() {
                 <Education />
                 <Projects />
                 <Experience />
+                <CodingActivity />
+                <Achievements />
                 <Socials />
             </main>
         </div>
