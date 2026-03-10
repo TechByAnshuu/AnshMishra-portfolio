@@ -86,55 +86,41 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
             const p = cl(-rect.top / totalH, 0, 1);
             const vw = window.innerWidth;
             const vh = window.innerHeight;
+            const isMobile = vw < 768;
 
             /* ── PHASE 0: fade black entry ─────────────────────────── */
             set(entryRef.current, { opacity: 1 - rr(p, 0, 0.06) });
 
             /* ── CARD Constants (small portrait card) ─────────────── */
-            const CW = Math.min(220, vw * 0.38);   // card width
-            const CH = Math.min(340, vh * 0.58);   // card height
+            const CW = isMobile ? Math.min(160, vw * 0.55) : Math.min(220, vw * 0.38);
+            const CH = isMobile ? Math.min(240, vh * 0.42) : Math.min(340, vh * 0.58);
 
-            /* ── BREAKOUT target: tall centered portrait ───────────
-               NOT edge-to-edge fullscreen — stays centered, grows to
-               90vh tall × ~50vw wide (portrait ratio, main object)   */
-            const BW = vw * 0.50;                  // breakout width  (50% viewport)
-            const BH = vh * 0.90;                  // breakout height (90% viewport)
-            const BL = (vw - BW) / 2;              // center horizontally
-            const BT = (vh - BH) / 2;              // center vertically (5% top gap)
+            /* ── BREAKOUT target ───────────────────────────────────────
+               Mobile:  full-width portrait, top 48% of screen
+               Desktop: centered 50vw portrait                         */
+            const BW = isMobile ? vw : vw * 0.50;
+            const BH = isMobile ? vh * 0.48 : vh * 0.90;
+            const BL = isMobile ? 0 : (vw - BW) / 2;
+            const BT = isMobile ? 0 : (vh - BH) / 2;
 
             /* ── PHASE 1: card rises from bottom ──────────────────── */
             const rise = rr(p, 0.00, 0.28);
             /* ── PHASE 2: BREAKOUT → big centered portrait ─────────── */
             const burst = rr(p, 0.28, 0.54);
-            /* ── PHASE 4: slide to left half ──────────────────────── */
+            /* ── PHASE 4: slide to left half (desktop) / stay full-width (mobile) */
             const slide = rr(p, 0.62, 0.84);
 
-            /* --- Width ---
-               Phase 1:   CW (card size, constant)
-               Phase 2:   CW → BW (grows to centered portrait width)
-               Phase 4:   BW → BW (same width, slides left)            */
             const wBurst = lx(CW, BW, burst);
-            const wFinal = wBurst;  // width stays BW in phase 4 (left half)
+            const wFinal = wBurst;
 
-            /* --- Height ---
-               Phase 1:   CH
-               Phase 2:   CH → BH (grows to 90vh)
-               Phase 4:   BH → vh (expands to full height as slides left) */
             const hBurst = lx(CH, BH, burst);
-            const hFinal = lx(hBurst, vh, slide);
+            // Mobile: photo shrinks to top 48% as terminal slides up from bottom
+            const hFinal = isMobile ? lx(hBurst, vh * 0.48, slide) : lx(hBurst, vh, slide);
 
-            /* --- Left ---
-               Phase 1:   centered = (vw-CW)/2
-               Phase 2:   card-center → BL (re-centers for new width BW)
-               Phase 4:   BL → 0 (slides to left wall)                  */
             const cardCenterL = (vw - CW) / 2;
             const lBurst = lx(cardCenterL, BL, burst);
             const lFinal = lx(lBurst, 0, slide);
 
-            /* --- Top ---
-               Phase 1:   rises from below to card-center
-               Phase 2:   card-center-y → BT (re-centers for new height BH)
-               Phase 4:   BT → 0 (anchors to top as it goes full height)  */
             const cardCenterT = (vh - CH) / 2;
             const topEntry = vh + 60;
             const topRisen = lx(topEntry, cardCenterT, rise);
@@ -142,11 +128,10 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
             const tBurst = lx(topAfterRise, BT, burst);
             const tFinal = lx(tBurst, 0, slide);
 
-            /* --- Border radius ---
-               Phase 1: 16px (card)   Phase 2: 16 → 0 (breakout)         */
+            /* Border radius */
             const brFinal = lx(16, 0, burst);
 
-            /* --- Opacity --- */
+            /* Opacity */
             const sOp = rr(p, 0, 0.10);
 
             set(stickerRef.current, {
@@ -168,10 +153,16 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
             });
 
             /* ── PHASE 4+5: Terminal ───────────────────────────────── */
-            const t2 = rr(p, 0.66, 0.86);
+            const t2 = rr(p, 0.70, 0.88);  // starts slightly later so photo settles first
             set(termRef.current, {
                 opacity: t2,
-                transform: `translateX(${lx(60, 0, t2)}px)`,
+                top: isMobile ? "48%" : "0",
+                left: isMobile ? "0" : "auto",
+                width: isMobile ? "100%" : "50%",
+                padding: isMobile ? "0" : "0 3% 0 2%",
+                transform: isMobile
+                    ? `translateY(${lx(30, 0, t2)}px)`
+                    : `translateX(${lx(60, 0, t2)}px)`,
                 pointerEvents: t2 > 0.05 ? "auto" : "none",
             });
 
@@ -303,18 +294,18 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
 
             {/* ─────────────────────────────────────────────────
                 OUTER: 320vh tall  →  100vh sticky + 220vh travel
+                Mobile: 240vh (less scroll distance needed)
             ───────────────────────────────────────────────── */}
             <section
                 ref={secRef}
                 id="portrait"
                 style={{
                     position: "relative",
-                    height: "320vh",
+                    height: "280vh",   /* works for both mobile and desktop */
                     /* NO background, NO isolation — lets LiquidEther fixed canvas show through */
                     zIndex: 10,
                 }}
             >
-                {/* Sticky viewport panel */}
                 {/* Sticky viewport panel */}
                 <div
                     ref={stickyRef}
@@ -410,7 +401,8 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                         style={{
                             position: "absolute", inset: 0,
                             display: "flex",
-                            alignItems: "center",
+                            alignItems: "flex-start",
+                            paddingTop: "22%",
                             justifyContent: "center",
                             zIndex: 10,
                             pointerEvents: "none",
@@ -498,32 +490,38 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                         ref={termRef}
                         style={{
                             position: "absolute",
-                            right: 0, top: 0, bottom: 0,
-                            width: "50%",
+                            /* Positioning set dynamically by scroll engine tick() on every frame/resize */
+                            position: "absolute",
+                            right: 0,
+                            bottom: 0,
+                            top: 0,           /* overridden per-frame by JS */
+                            left: "auto",     /* overridden per-frame by JS */
+                            width: "50%",     /* overridden per-frame by JS */
                             zIndex: 30,
                             display: "flex", alignItems: "center", justifyContent: "center",
-                            padding: "0 3% 0 2%",
+                            padding: "0 3% 0 2%",  /* overridden per-frame by JS */
                             opacity: 0,
-                            transform: "translateX(60px)",
+                            transform: "translateY(40px)",
                             pointerEvents: "none",
                             willChange: "transform,opacity",
                         }}
                     >
                         <div style={{
-                            width: "100%", maxWidth: 460,
-                            /* GLASSMORPHISM — matches .glass / .dark .glass from index.css
-                               Light: bg-white/80 + border-black/10
-                               Dark:  bg-black/10 + border-white/10                        */
-                            background: COLORS.termBg,
-                            backdropFilter: "blur(8px)",
-                            WebkitBackdropFilter: "blur(8px)",
+                            width: "100%",
+                            maxWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? "100%" : 460,
+                            /* Mobile: solid opaque card with no glass bleed-through */
+                            background: isDark
+                                ? "rgba(8, 10, 20, 0.97)"
+                                : "rgba(255, 255, 255, 0.98)",
+                            backdropFilter: "blur(12px)",
+                            WebkitBackdropFilter: "blur(12px)",
                             border: COLORS.termBorder,
-                            borderRadius: 16, padding: "20px 22px 24px",
+                            borderRadius: typeof window !== 'undefined' && window.innerWidth < 768 ? "16px 16px 0 0" : 16,
+                            padding: typeof window !== 'undefined' && window.innerWidth < 768 ? "14px 16px 16px" : "20px 22px 24px",
                             position: "relative", overflow: "hidden",
-                            /* Layered depth shadows — gives floating premium feel */
                             boxShadow: isDark
-                                ? `0 0 32px rgba(${ACC_R},.08), 0 24px 48px rgba(0,0,0,.60), 0 8px 16px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.08)`
-                                : `0 0 24px rgba(${ACC_R},.06), 0 20px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.90)`,
+                                ? `0 -8px 32px rgba(0,0,0,.70), 0 0 0 1px rgba(255,255,255,.08)`
+                                : `0 -8px 24px rgba(15,40,84,.12), 0 0 0 1px rgba(15,40,84,.10)`,
                         }}>
                             {/* Mac dots */}
                             <div style={{
@@ -553,10 +551,11 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                             </div>
                             {/* Code */}
                             <div style={{
-                                /* Code block — JetBrains Mono for authentic developer feel */
                                 fontFamily: "'JetBrains Mono',monospace",
-                                fontSize: 13,            /* comfortable reading size            */
-                                lineHeight: 1.75,        /* breathing room between lines        */
+                                fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? 10 : 13,
+                                lineHeight: typeof window !== 'undefined' && window.innerWidth < 768 ? 1.55 : 1.75,
+                                overflowY: typeof window !== 'undefined' && window.innerWidth < 768 ? "auto" : "visible",
+                                maxHeight: typeof window !== 'undefined' && window.innerWidth < 768 ? "calc(52vh - 80px)" : "none",
                             }}>
                                 {CODE.map((line, i) => (
                                     <div key={i} ref={el => { lineRefs.current[i] = el; }} style={{
@@ -573,8 +572,10 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                                     }}>
                                         <span style={{
                                             color: isDark ? "rgba(71,85,105,.45)" : "rgba(71,85,105,.55)",
-                                            fontSize: 11,
-                                            marginRight: 14, minWidth: 18, textAlign: "right",
+                                            fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? 9 : 11,
+                                            marginRight: typeof window !== 'undefined' && window.innerWidth < 768 ? 8 : 14,
+                                            minWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? 12 : 18,
+                                            textAlign: "right",
                                             userSelect: "none", flexShrink: 0,
                                         }}>
                                             {line.a !== "" ? i + 1 : ""}
@@ -612,16 +613,20 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                         </div>
                     </div>
 
-                    {/* ── TOP blend — fades into site background above the section ── */}
+                    {/* ── TOP blend — subtle, does NOT cover the navbar ── */}
                     <div aria-hidden style={{
-                        position: "absolute", top: 0, left: 0, right: 0, height: 90,
-                        background: "linear-gradient(to bottom,#000000 0%,transparent 100%)",
+                        position: "absolute", top: 0, left: 0, right: 0, height: 48,
+                        background: isDark
+                            ? "linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,transparent 100%)"
+                            : "linear-gradient(to bottom,rgba(255,255,255,0.35) 0%,transparent 100%)",
                         zIndex: 55, pointerEvents: "none",
                     }} />
                     {/* ── BOTTOM blend — fades into site background below the section ── */}
                     <div aria-hidden style={{
                         position: "absolute", bottom: 0, left: 0, right: 0, height: 90,
-                        background: "linear-gradient(to top,#000000 0%,transparent 100%)",
+                        background: isDark
+                            ? "linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 100%)"
+                            : "linear-gradient(to top,rgba(255,255,255,0.6) 0%,transparent 100%)",
                         zIndex: 55, pointerEvents: "none",
                     }} />
 

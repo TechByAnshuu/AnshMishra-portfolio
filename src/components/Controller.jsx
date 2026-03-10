@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 
 const sections = [
-    { id: 'meet-me', label: 'Meet Me' },
-    { id: 'portrait', label: 'Portrait' },
+    { id: 'meet-me', label: 'About Me' },
     { id: 'skills', label: 'Skills' },
-    { id: 'projects', label: 'My Work' },
+    { id: 'education', label: 'Education' },
+    { id: 'projects', label: 'Projects' },
     { id: 'experience', label: 'Experience' },
-    { id: 'socials', label: 'Socials' },
+    { id: 'coding-activity', label: 'Activity' },
+    { id: 'achievements', label: 'Achievements' },
+    { id: 'socials', label: 'Contact' },
 ];
 
 export default function Controller() {

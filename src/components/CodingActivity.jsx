@@ -189,7 +189,7 @@ function GitHubCard() {
 
             <div className="p-6 flex flex-col gap-5">
                 {/* Streak card — light mode */}
-                <div className="w-full rounded-xl overflow-hidden border border-[#0F2854]/8 dark:border-white/8 bg-[#0F2854]/3 dark:bg-black/20">
+                <div className="w-full rounded-xl overflow-x-auto border border-[#0F2854]/8 dark:border-white/8 bg-[#0F2854]/3 dark:bg-black/20">
                     <img
                         src={`${baseStreak}&theme=transparent&ring=0F2854&fire=0F2854&currStreakLabel=0F2854&sideLabels=374151&dates=6b7280&sideNums=0F2854&currStreakNum=0F2854`}
                         alt="GitHub Streak Stats"
@@ -207,7 +207,7 @@ function GitHubCard() {
                 </div>
 
                 {/* Contribution heatmap */}
-                <div className="w-full rounded-xl overflow-hidden border border-[#0F2854]/8 dark:border-white/8 p-3 bg-[#0F2854]/3 dark:bg-black/20">
+                <div className="w-full rounded-xl overflow-x-auto border border-[#0F2854]/8 dark:border-white/8 p-3 bg-[#0F2854]/3 dark:bg-black/20">
                     <img
                         src={`https://ghchart.rshah.org/0F2854/${GH_USER}`}
                         alt="Contribution Heatmap"

@@ -159,7 +159,7 @@ export const repos = [
 export const intro = {
     name: "Ansh Mishra",
     title: "Cloud & DevOps Engineer",
-    description: "Hi, I'm Ansh Mishra, a passionate Cloud & DevOps Engineer. I create beautiful, responsive applications with clean code and elegant user experiences.",
+    description: "Hi, I'm Ansh Mishra, a Web Developer and Cloud Engineer who builds end-to-end solutions. I create responsive web applications with React and Node.js, then deploy them on scalable cloud infrastructure using Docker, Kubernetes, and AWS. I don't just write code—I ship it, monitor it, and make sure it stays online.",
 };
 
 export const codingStats = {

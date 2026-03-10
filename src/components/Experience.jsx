@@ -6,9 +6,9 @@ export default function Experience() {
     const [expandedRepo, setExpandedRepo] = useState(null);
 
     return (
-        <section id="experience" className="min-h-screen flex items-center justify-center p-8">
+        <section id="experience" className="min-h-screen flex items-center justify-center px-4 py-16 md:p-8">
             <div className="max-w-6xl w-full">
-                <h2 className="text-4xl md:text-6xl font-heading font-semibold mb-12 text-center text-[#0F2854] dark:text-[#93C5FD]">
+                <h2 className="text-3xl md:text-6xl font-heading font-semibold mb-8 md:mb-12 text-center text-[#0F2854] dark:text-[#93C5FD]">
                     Open Source Contributions
                 </h2>
 
