@@ -5,6 +5,7 @@ import { ExternalLink, Github, ArrowLeft, Search, X } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import LiquidEther from '../components/LiquidEther';
+import Socials from '../components/Socials';
 
 /* ─────────────────────────────────────
    Hook: fire once on viewport entry
@@ -277,6 +278,11 @@ export default function AllProjectsPage() {
                     )}
                 </div>
             </main>
+
+            {/* ── Socials section ── */}
+            <div className="relative z-10">
+                <Socials />
+            </div>
         </div>
     );
 }

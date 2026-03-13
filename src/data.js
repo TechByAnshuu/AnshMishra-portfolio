@@ -72,21 +72,21 @@ export const projects = [
     {
         name: "CivicSphere",
         tech: "Node.js • Express.js • Docker • Apache • Shell Script • Linux",
-        desc: "Dockerized Node.js web app with load-balanced Apache routing, automated Shell deployment scripts, and 99.2% uptime.",
+        desc: "A production-ready Node.js application demonstrating DevOps best practices. Features Docker containerization, Apache load balancing, automated deployment scripts, and monitoring—achieving 99.2% uptime. Built to showcase real-world cloud infrastructure skills.",
         link: "https://github.com/TechByAnshuu/Dockerized-nodejs-cloud-app",
         liveLink: "https://dockerized-nodejs-cloud-app.onrender.com/",
     },
     {
         name: "INKDROP",
         tech: "React.js • Node.js • Express.js • MongoDB • Tailwind CSS • REST APIs",
-        desc: "Digital library platform to browse, read, and download e-books with secure auth and cloud-based PDF delivery.",
+        desc: "A modern e-book platform built with the MERN stack, featuring secure authentication, cloud-based PDF delivery, and a polished React interface. Designed to handle real user traffic with responsive design and optimized performance.",
         link: "https://github.com/TechByAnshuu/CodeCrafters",
         liveLink: "https://inkdrop-v2-0.onrender.com/",
     },
     {
         name: "Eventick",
         tech: "React.js • JavaScript • Tailwind CSS • Firebase Auth • MongoDB Atlas • Vite",
-        desc: "Event ticket booking platform with real-time seat selection, OTP login, and multi-step booking flow built for 200+ concurrent users.",
+        desc: "A scalable event booking platform handling 200+ concurrent users with real-time seat selection, OTP authentication, and multi-step checkout flow. Built with performance and user experience as top priorities.",
         link: "https://github.com/TechByAnshuu/Coding-Inventory",
         liveLink: "https://eventtickeventsbookingplatform.vercel.app/",
     },
@@ -96,15 +96,32 @@ export const repos = [
     {
         name: "Rocket.Chat",
         description:
-            "Contributed full-stack validation improvements and UX enhancements across integrations and message navigation.",
+            "Rocket.Chat is one of the world's largest open-source team communication platforms with 1,000+ contributors and millions of daily users. I contributed full-stack improvements across search navigation, webhook validation, and UX consistency.",
+        stars: "42k+",
+        language: "TypeScript",
+        role: "Open Source Contributor",
         prs: [
             {
                 title: "feat(search): enable click-to-jump on search result messages",
                 url: "https://github.com/RocketChat/Rocket.Chat/pull/39081",
+                type: "feat",
+                status: "open",
+                description:
+                    "Previously, clicking a message in the search results panel had no effect — users couldn't navigate to the actual message in the channel. I implemented click-handler logic on search result items that scrolls the user directly to the target message in the channel timeline, with a highlight pulse animation to mark the message. This required hooking into the message list virtualizer and coordinating state between the search panel and the room view.",
+                impact: "Improved UX for all users using Rocket.Chat's message search — a heavily-used daily workflow.",
+                tech: ["TypeScript", "React", "Fuselage UI"],
+                area: "Search · Frontend · UX",
             },
             {
                 title: "fix: enforce validation for Incoming WebHook alias field",
                 url: "https://github.com/RocketChat/Rocket.Chat/pull/38909",
+                type: "fix",
+                status: "open",
+                description:
+                    "The Incoming Webhook alias field accepted empty strings and overly long values without any server-side or client-side validation, which could silently break webhook display names across rooms. I added input length constraints, whitespace trimming, and a minimum-character validation, along with visible error feedback in the admin UI settings form.",
+                impact: "Prevented silent data corruption in webhook configurations — affects every team using custom Incoming Webhooks.",
+                tech: ["TypeScript", "Node.js", "Meteor"],
+                area: "Integrations · Backend · Validation",
             },
         ],
     },

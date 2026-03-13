@@ -18,6 +18,7 @@ const CodingActivity = lazy(() => import('./components/CodingActivity'));
 const Achievements = lazy(() => import('./components/Achievements'));
 const Socials = lazy(() => import('./components/Socials'));
 const AllProjectsPage = lazy(() => import('./pages/AllProjects'));
+const ResumePage = lazy(() => import('./pages/Resume'));
 
 function AppContent() {
     const { theme } = useTheme();
@@ -76,6 +77,11 @@ export default function App() {
                 <Route path="/projects" element={
                     <Suspense fallback={<Loading />}>
                         <AllProjectsPage />
+                    </Suspense>
+                } />
+                <Route path="/resume" element={
+                    <Suspense fallback={<Loading />}>
+                        <ResumePage />
                     </Suspense>
                 } />
             </Routes>

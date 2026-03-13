@@ -12,7 +12,7 @@ const NAV_ITEMS = [
     { label: 'Experience', id: 'experience' },
     { label: 'Activity', id: 'coding-activity' },
     { label: 'Achievements', id: 'achievements' },
-    { label: 'Contact', id: 'socials' },
+    { label: 'Socials', id: 'socials' },
 ];
 
 function scrollTo(id) {

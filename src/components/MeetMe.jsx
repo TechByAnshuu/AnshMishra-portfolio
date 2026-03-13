@@ -1,5 +1,6 @@
 import { intro } from '../data';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Mail, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function MeetMe() {
     return (
@@ -51,6 +52,24 @@ export default function MeetMe() {
                         >
                             <Mail className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
                         </a>
+
+                        {/* Resume button */}
+                        <Link
+                            to="/resume"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-full glass border border-white/30 hover:bg-gradient-to-br hover:from-[#0F2854] hover:to-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon relative"
+                            aria-label="View Resume"
+                            title="View Resume"
+                        >
+                            <FileText className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
+                            {/* Tooltip */}
+                            <span className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-[10px] font-semibold
+                                            bg-[#0F2854] dark:bg-white/90 text-white dark:text-[#0F2854]
+                                            opacity-0 group-hover/icon:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-lg">
+                                View Resume
+                            </span>
+                        </Link>
                     </div>
                 </div>
             </div>

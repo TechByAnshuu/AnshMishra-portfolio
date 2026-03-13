@@ -20,9 +20,9 @@ import {
 const milestones = [
     {
         year: '2023',
-        label: 'B.Tech Begins',
+        label: 'The Beginning',
         title: 'Started B.Tech',
-        body: 'Began my Computer Science journey — diving deep into programming fundamentals, logic building, and problem-solving.',
+        body: 'Dove headfirst into programming fundamentals, logic building, and problem-solving — laying the groundwork for everything that followed.',
         Icon: GraduationCap,
         color: { ring: '#60A5FA', glow: 'rgba(96,165,250,0.55)' },
         side: 'left',
@@ -30,7 +30,7 @@ const milestones = [
     {
         year: '2023',
         label: 'Core CS',
-        title: 'Programming Basics',
+        title: 'Building the Foundation',
         body: 'Mastered C programming, algorithms, and data structures — the bedrock of every great software engineer.',
         Icon: Code2,
         color: { ring: '#A78BFA', glow: 'rgba(167,139,250,0.55)' },
@@ -56,7 +56,7 @@ const milestones = [
     },
     {
         year: '2025',
-        label: 'Cloud-native',
+        label: 'Infrastructure Meets Code',
         title: 'DevOps & Cloud',
         body: 'Embraced Docker, Kubernetes, CI/CD pipelines, and AWS — automating deployments for real production systems.',
         Icon: Cloud,
@@ -65,7 +65,7 @@ const milestones = [
     },
     {
         year: 'Now',
-        label: 'Shipping to Prod',
+        label: 'Building for Impact',
         title: 'Advanced Projects',
         body: 'Building production-grade full-stack & DevOps projects — contributing to open-source and solving real engineering problems.',
         Icon: Rocket,

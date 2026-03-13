@@ -25,27 +25,31 @@ function set(el, styles) {
 
 /* ─── Terminal code ──────────────────────────────────────────────── */
 const CODE = [
+    { t: "header", a: "ansh@dev ~ developer.js", b: "" },
     { t: "comment", a: "// initializing Ansh Mishra...", b: "" },
     { t: "keyword", a: "const", b: " developer = {" },
     { t: "code", a: "  name:", b: ' "Ansh Mishra",' },
-    { t: "code", a: "  role:", b: ' "Cloud & DevOps Engineer",' },
-    { t: "code", a: "  focus:", b: ' "Build. Break. Fix. Repeat.",' },
-    { t: "code", a: "  drives:", b: " [" },
-    { t: "string", a: '    "Clean infrastructure",', b: "" },
-    { t: "string", a: '    "Automated everything",', b: "" },
-    { t: "string", a: '    "Ship fast, fail safe",', b: "" },
-    { t: "code", a: "  ],", b: "" },
+    { t: "code", a: "  role:", b: ' "Full-Stack Developer & Cloud Engineer",' },
+    { t: "code", a: "  stack:", b: ' ["React", "Node.js", "AWS", "Docker", "K8s"],' },
+    { t: "code", a: "  philosophy:", b: ' "Build. Deploy. Scale. Repeat.",' },
+    { t: "code", a: "  skills:", b: " {" },
+    { t: "code", a: "    frontend:", b: ' ["React", "Tailwind CSS", "JavaScript"],' },
+    { t: "code", a: "    backend:", b: ' ["Node.js", "Express", "MongoDB", "REST APIs"],' },
+    { t: "code", a: "    devops:", b: ' ["Docker", "Kubernetes", "CI/CD"],' },
+    { t: "code", a: "    cloud:", b: ' ["AWS", "Linux", "Shell Scripting"]' },
+    { t: "code", a: "  }", b: "" },
     { t: "code", a: "};", b: "" },
     { t: "comment", a: "", b: "" },
-    { t: "comment", a: "// life philosophy...", b: "" },
+    { t: "comment", a: "// life cycle...", b: "" },
     { t: "keyword", a: "while", b: " (alive) {" },
-    { t: "string", a: "  learn();", b: "" },
-    { t: "string", a: "  build();", b: "" },
-    { t: "string", a: "  deploy();", b: "" },
-    { t: "comment", a: "  // repeat until perfect", b: "" },
+    { t: "string", a: "  write_code();", b: "" },
+    { t: "string", a: "  containerize();", b: "" },
+    { t: "string", a: "  deploy_to_prod();", b: "" },
+    { t: "string", a: "  monitor();", b: "" },
+    { t: "comment", a: "  // repeat until perfect ", b: "" },
     { t: "code", a: "}", b: "" },
     { t: "comment", a: "", b: "" },
-    { t: "output", a: "> Status: Online & Building 🚀", b: "" },
+    { t: "output", a: "> Status: Online & Shipping ", b: "" },
 ];
 
 
@@ -508,7 +512,7 @@ export default function HeroIntro({ photoSrc = "/ansh.jpg" }) {
                     >
                         <div style={{
                             width: "100%",
-                            maxWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? "100%" : 460,
+                            maxWidth: typeof window !== 'undefined' && window.innerWidth < 768 ? "100%" : 600,
                             /* Mobile: solid opaque card with no glass bleed-through */
                             background: isDark
                                 ? "rgba(8, 10, 20, 0.97)"
