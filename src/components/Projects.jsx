@@ -2,13 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { projects } from '../data';
 import { ExternalLink, Github, Play, Monitor } from 'lucide-react';
 
-/* ─────────────────────────────────────────────
-   Hook: fires once when element enters viewport
-───────────────────────────────────────────── */
 function useScrollReveal(threshold = 0.15) {
     const ref = useRef(null);
     const [visible, setVisible] = useState(false);
-
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
@@ -19,25 +15,21 @@ function useScrollReveal(threshold = 0.15) {
         obs.observe(el);
         return () => obs.disconnect();
     }, [threshold]);
-
     return [ref, visible];
 }
 
-/* ──────────────────────────────────────────
-   Mini Browser frame with thumbnail → iframe
-────────────────────────────────────────── */
 function LazyPreview({ url, title, thumbnail }) {
     const [loaded, setLoaded] = useState(false);
 
     return (
-        <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/20 dark:border-white/10 group/preview">
+        <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-[#0F2854]/10 dark:border-white/10 group/preview">
 
             {/* ── Browser chrome bar ── */}
-            <div className="flex items-center gap-1.5 px-4 py-2.5 bg-white/30 dark:bg-black/40 backdrop-blur-md border-b border-white/20 dark:border-white/10">
+            <div className="flex items-center gap-1.5 px-4 py-2.5 bg-white/80 dark:bg-black/40 backdrop-blur-md border-b border-[#0F2854]/10 dark:border-white/10">
                 <span className="w-3 h-3 rounded-full bg-red-400/80" />
                 <span className="w-3 h-3 rounded-full bg-yellow-400/80" />
                 <span className="w-3 h-3 rounded-full bg-green-400/80" />
-                <div className="flex-1 mx-3 h-5 rounded-full bg-white/10 dark:bg-white/5 flex items-center px-3">
+                <div className="flex-1 mx-3 h-5 rounded-full bg-[#0F2854]/5 dark:bg-white/5 flex items-center px-3">
                     <span className="text-[10px] text-foreground/35 font-mono truncate select-none">
                         {url}
                     </span>
@@ -46,15 +38,13 @@ function LazyPreview({ url, title, thumbnail }) {
             </div>
 
             {/* ── Preview area ── */}
-            <div className="relative w-full aspect-[16/10] bg-black/20 overflow-hidden">
+            <div className="relative w-full aspect-[16/10] bg-[#0F2854]/5 dark:bg-black/20 overflow-hidden">
                 {!loaded ? (
-                    /* ── THUMBNAIL STATE ── */
                     <button
                         onClick={() => setLoaded(true)}
                         className="absolute inset-0 w-full h-full group/btn cursor-pointer"
                         aria-label={`Load live preview of ${title}`}
                     >
-                        {/* Thumbnail image */}
                         {thumbnail ? (
                             <img
                                 src={thumbnail}
@@ -64,20 +54,14 @@ function LazyPreview({ url, title, thumbnail }) {
                                 draggable={false}
                             />
                         ) : (
-                            /* Fallback gradient if no thumbnail */
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/8 to-cyan-500/10" />
                         )}
-
-                        {/* Dark overlay on hover to show play button clearly */}
                         <div className="absolute inset-0 bg-black/20 group-hover/btn:bg-black/45 transition-colors duration-300" />
-
-                        {/* Play button — centered, fades in on hover */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3
                                         opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300">
                             <div className="w-14 h-14 rounded-full bg-white/15 border border-white/40
                                             backdrop-blur-sm flex items-center justify-center
-                                            scale-90 group-hover/btn:scale-100 transition-transform duration-300
-                                            shadow-xl">
+                                            scale-90 group-hover/btn:scale-100 transition-transform duration-300 shadow-xl">
                                 <Play className="w-5 h-5 text-white ml-0.5" fill="white" />
                             </div>
                             <span className="text-xs font-medium text-white/80 tracking-wide
@@ -85,14 +69,8 @@ function LazyPreview({ url, title, thumbnail }) {
                                 Load live preview
                             </span>
                         </div>
-
-                        {/* Subtle border glow on hover */}
-                        <div className="absolute inset-0 rounded-b-2xl ring-inset ring-0
-                                        group-hover/btn:ring-1 group-hover/btn:ring-white/20
-                                        transition-all duration-300" />
                     </button>
                 ) : (
-                    /* ── IFRAME STATE ── */
                     <iframe
                         src={url}
                         title={`${title} live preview`}
@@ -106,9 +84,6 @@ function LazyPreview({ url, title, thumbnail }) {
     );
 }
 
-/* ─────────────────────────────
-   Tech stack chips
-───────────────────────────── */
 function TechChips({ tech }) {
     return (
         <div className="flex flex-wrap gap-2">
@@ -116,9 +91,9 @@ function TechChips({ tech }) {
                 <span
                     key={t}
                     className="px-3 py-1 text-xs font-medium rounded-full
-                               bg-white/20 dark:bg-white/8 border border-white/30 dark:border-white/15
-                               text-[#0F2854] dark:text-[#93C5FD]
-                               backdrop-blur-sm"
+                               bg-[#0F2854]/8 dark:bg-white/8
+                               border border-[#0F2854]/15 dark:border-white/15
+                               text-[#0F2854] dark:text-[#93C5FD]"
                 >
                     {t}
                 </span>
@@ -127,16 +102,12 @@ function TechChips({ tech }) {
     );
 }
 
-/* ────────────────────────────────────
-   Single project row (alternating)
-──────────────────────────────────── */
 function ProjectRow({ project, index }) {
     const [ref, visible] = useScrollReveal(0.1);
     const isReversed = index % 2 === 1;
 
     const details = (
         <div className="flex flex-col justify-center gap-5 py-2">
-            {/* Index badge */}
             <div className="flex items-center gap-3">
                 <span className="text-xs font-mono text-[#0F2854]/50 dark:text-[#93C5FD]/40 tracking-widest uppercase">
                     Project 0{index + 1}
@@ -155,14 +126,16 @@ function ProjectRow({ project, index }) {
             <TechChips tech={project.tech} />
 
             <div className="flex flex-wrap gap-3 pt-1">
+                {/* GitHub button — visible in both modes */}
                 <a
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-5 py-2.5 rounded-full
-                               glass border border-white/30 dark:border-white/15
-                               hover:bg-[#0F2854] dark:hover:bg-[#93C5FD]/25
-                               hover:text-white dark:hover:text-white
+                               bg-white/70 dark:bg-white/8
+                               border border-[#0F2854]/20 dark:border-white/15
+                               text-[#0F2854] dark:text-white
+                               hover:bg-[#0F2854] hover:text-white dark:hover:bg-[#93C5FD]/25
                                hover:border-[#0F2854] dark:hover:border-[#93C5FD]/40
                                hover:-translate-y-0.5 hover:shadow-lg
                                transition-all duration-300 text-sm font-medium"
@@ -194,7 +167,6 @@ function ProjectRow({ project, index }) {
 
     const preview = (
         <div className="relative">
-            {/* Ambient glow behind frame */}
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-blue-400/10 via-purple-400/8 to-cyan-400/10 blur-xl pointer-events-none" />
             <LazyPreview
                 url={project.liveLink || project.link}
@@ -231,9 +203,6 @@ function ProjectRow({ project, index }) {
     );
 }
 
-/* ─────────────────────────────
-   Main section export
-───────────────────────────── */
 export default function Projects() {
     const [headerRef, headerVisible] = useScrollReveal(0.2);
     const featuredProjects = projects.slice(0, 3);
@@ -242,7 +211,6 @@ export default function Projects() {
         <section id="projects" className="min-h-screen py-24 px-6 md:px-8">
             <div className="max-w-6xl mx-auto">
 
-                {/* ── Section Header ── */}
                 <div
                     ref={headerRef}
                     className={`text-center mb-20 transition-all duration-700 ease-out ${headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -256,21 +224,18 @@ export default function Projects() {
                     <div className="mt-5 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-[#0F2854]/60 to-[#93C5FD]/60" />
                 </div>
 
-                {/* ── Project Rows ── */}
                 <div className="flex flex-col gap-24 lg:gap-32">
                     {featuredProjects.map((project, i) => (
                         <ProjectRow key={project.name} project={project} index={i} />
                     ))}
                 </div>
 
-                {/* ── Divider ── */}
                 <div className="mt-24 flex items-center gap-4">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#0F2854]/20 dark:via-[#93C5FD]/20 to-transparent" />
                     <span className="text-xs font-mono text-foreground/30 tracking-widest uppercase">end of features</span>
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#0F2854]/20 dark:via-[#93C5FD]/20 to-transparent" />
                 </div>
 
-                {/* ── View All Projects CTA ── */}
                 <ViewAllButton />
             </div>
         </section>

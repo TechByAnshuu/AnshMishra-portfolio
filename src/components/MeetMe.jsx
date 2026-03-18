@@ -6,7 +6,7 @@ export default function MeetMe() {
     return (
         <section id="about" className="flex items-center justify-center px-4 py-8 md:px-8 lg:py-16 xl:px-16 relative z-20">
             <div className="max-w-6xl w-full">
-                <div className="glass rounded-3xl p-6 md:p-12 lg:p-16 space-y-8 border border-white/40 dark:border-white/10 shadow-xl">
+                <div className="glass rounded-3xl p-6 md:p-12 lg:p-16 space-y-8 shadow-xl">
                     <div className="space-y-4">
                         <h2 className="text-sm uppercase tracking-widest text-[#0F2854]/60 dark:text-white/60 font-sans font-medium">
                             {/* About Me */}
@@ -33,26 +33,41 @@ export default function MeetMe() {
                             href="https://github.com/TechByAnshuu"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-3 rounded-full glass border border-white/30 hover:bg-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon"
+                            className="p-3 rounded-full
+                                       bg-white/60 dark:bg-white/10
+                                       border border-[#0F2854]/15 dark:border-white/20
+                                       hover:bg-[#1e3a5f] dark:hover:bg-white/20
+                                       hover:border-[#1e3a5f] dark:hover:border-white/30
+                                       transition-all duration-300 hover:scale-110 group/icon"
                             aria-label="GitHub"
                         >
-                            <Github className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
+                            <Github className="w-6 h-6 text-[#0F2854] dark:text-white group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
                         </a>
                         <a
                             href="https://www.linkedin.com/in/ansh-mishra-dev/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-3 rounded-full glass border border-white/30 hover:bg-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon"
+                            className="p-3 rounded-full
+                                       bg-white/60 dark:bg-white/10
+                                       border border-[#0F2854]/15 dark:border-white/20
+                                       hover:bg-[#1e3a5f] dark:hover:bg-white/20
+                                       hover:border-[#1e3a5f] dark:hover:border-white/30
+                                       transition-all duration-300 hover:scale-110 group/icon"
                             aria-label="LinkedIn"
                         >
-                            <Linkedin className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
+                            <Linkedin className="w-6 h-6 text-[#0F2854] dark:text-white group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
                         </a>
                         <a
                             href="mailto:anshmishra14.14@gmail.com"
-                            className="p-3 rounded-full glass border border-white/30 hover:bg-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon"
+                            className="p-3 rounded-full
+                                       bg-white/60 dark:bg-white/10
+                                       border border-[#0F2854]/15 dark:border-white/20
+                                       hover:bg-[#1e3a5f] dark:hover:bg-white/20
+                                       hover:border-[#1e3a5f] dark:hover:border-white/30
+                                       transition-all duration-300 hover:scale-110 group/icon"
                             aria-label="Email"
                         >
-                            <Mail className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
+                            <Mail className="w-6 h-6 text-[#0F2854] dark:text-white group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
                         </a>
 
                         {/* Resume button */}
@@ -60,11 +75,16 @@ export default function MeetMe() {
                             to="/view-resume"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-3 rounded-full glass border border-white/30 hover:bg-gradient-to-br hover:from-[#0F2854] hover:to-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon relative"
+                            className="p-3 rounded-full
+                                       bg-white/60 dark:bg-white/10
+                                       border border-[#0F2854]/15 dark:border-white/20
+                                       hover:bg-gradient-to-br hover:from-[#0F2854] hover:to-[#1e3a5f]
+                                       hover:border-[#0F2854] dark:hover:bg-white/20
+                                       transition-all duration-300 hover:scale-110 group/icon relative"
                             aria-label="View Resume"
                             title="View Resume"
                         >
-                            <FileText className="w-6 h-6 group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
+                            <FileText className="w-6 h-6 text-[#0F2854] dark:text-white group-hover/icon:text-white dark:group-hover/icon:text-white transition-colors" />
                             {/* Tooltip */}
                             <span className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-[10px] font-semibold
                                             bg-[#0F2854] dark:bg-white/90 text-white dark:text-[#0F2854]

@@ -5,7 +5,6 @@ import {
     Github, Linkedin, Twitter, Globe
 } from 'lucide-react';
 
-/* Map social name → icon (fallback to Globe) */
 const ICON_MAP = {
     'GitHub': Github,
     'LinkedIn': Linkedin,
@@ -20,7 +19,7 @@ function SocialIcon({ name }) {
 
 export default function Socials() {
     const [form, setForm] = useState({ name: '', email: '', message: '' });
-    const [status, setStatus] = useState('idle'); // idle | sending | success
+    const [status, setStatus] = useState('idle');
 
     const handleChange = (e) =>
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -35,6 +34,15 @@ export default function Socials() {
             setTimeout(() => setStatus('idle'), 4000);
         }, 1200);
     };
+
+    /* Shared input class — visible in both light and dark */
+    const inputCls = `w-full px-4 py-2.5 rounded-xl text-sm
+        bg-white/80 dark:bg-white/5
+        border border-[#0F2854]/15 dark:border-white/10
+        text-foreground placeholder:text-foreground/40
+        focus:border-[#0F2854]/40 dark:focus:border-[#93C5FD]/35
+        focus:outline-none focus:ring-2 focus:ring-[#0F2854]/8 dark:focus:ring-[#93C5FD]/10
+        transition-all duration-300`;
 
     return (
         <section id="socials" className="min-h-screen flex items-center justify-center px-4 py-16 md:p-10">
@@ -51,25 +59,23 @@ export default function Socials() {
                     <div className="mt-3 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
                 </div>
 
-                {/* ── Half-half grid ── */}
                 <div className="grid lg:grid-cols-2 gap-6">
 
                     {/* ══ LEFT: Contact form ══ */}
-                    <div className="glass rounded-3xl border border-white/40 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col">
+                    <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-[#0F2854]/12 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col">
                         {/* Card header */}
                         <div className="flex items-center gap-3 px-6 py-4
-                                        border-b border-white/20 dark:border-white/8
+                                        border-b border-[#0F2854]/8 dark:border-white/8
                                         bg-gradient-to-r from-[#0F2854]/5 via-transparent to-[#93C5FD]/5">
                             <span className="flex items-center justify-center w-8 h-8 rounded-full
                                              bg-[#0F2854]/10 dark:bg-[#93C5FD]/10
-                                             border border-white/30 dark:border-white/10">
+                                             border border-[#0F2854]/15 dark:border-white/10">
                                 <MessageSquare className="w-4 h-4 text-[#0F2854] dark:text-[#93C5FD]" />
                             </span>
                             <div>
                                 <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-foreground/40">Say Hello</p>
                                 <h3 className="text-sm font-heading font-semibold text-[#0F2854] dark:text-[#93C5FD]">Send a Message</h3>
                             </div>
-                            {/* Availability badge */}
                             <div className="ml-auto flex items-center gap-1.5">
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -84,63 +90,44 @@ export default function Socials() {
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label htmlFor="s-name"
-                                        className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/45">
+                                        className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/50">
                                         Name
                                     </label>
                                     <input
                                         id="s-name" type="text" name="name"
                                         value={form.name} onChange={handleChange}
                                         placeholder="Your name" required
-                                        className="w-full px-4 py-2.5 rounded-xl text-sm
-                                                   bg-white/10 dark:bg-white/5
-                                                   border border-white/30 dark:border-white/10
-                                                   text-foreground placeholder:text-foreground/30
-                                                   focus:border-[#0F2854]/40 dark:focus:border-[#93C5FD]/35
-                                                   focus:outline-none focus:ring-2 focus:ring-[#0F2854]/8 dark:focus:ring-[#93C5FD]/10
-                                                   transition-all duration-300"
+                                        className={inputCls}
                                     />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label htmlFor="s-email"
-                                        className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/45">
+                                        className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/50">
                                         Email
                                     </label>
                                     <input
                                         id="s-email" type="email" name="email"
                                         value={form.email} onChange={handleChange}
                                         placeholder="you@example.com" required
-                                        className="w-full px-4 py-2.5 rounded-xl text-sm
-                                                   bg-white/10 dark:bg-white/5
-                                                   border border-white/30 dark:border-white/10
-                                                   text-foreground placeholder:text-foreground/30
-                                                   focus:border-[#0F2854]/40 dark:focus:border-[#93C5FD]/35
-                                                   focus:outline-none focus:ring-2 focus:ring-[#0F2854]/8 dark:focus:ring-[#93C5FD]/10
-                                                   transition-all duration-300"
+                                        className={inputCls}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5 flex-1 flex flex-col">
                                 <label htmlFor="s-message"
-                                    className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/45">
+                                    className="block text-[10px] font-semibold uppercase tracking-widest text-foreground/50">
                                     Message
                                 </label>
                                 <textarea
                                     id="s-message" name="message"
                                     value={form.message} onChange={handleChange}
-                                    placeholder="Tell me about your project or just say hi…"
-                                    required rows={5}
-                                    className="flex-1 w-full px-4 py-3 rounded-xl text-sm resize-none
-                                               bg-white/10 dark:bg-white/5
-                                               border border-white/30 dark:border-white/10
-                                               text-foreground placeholder:text-foreground/30
-                                               focus:border-[#0F2854]/40 dark:focus:border-[#93C5FD]/35
-                                               focus:outline-none focus:ring-2 focus:ring-[#0F2854]/8 dark:focus:ring-[#93C5FD]/10
-                                               transition-all duration-300"
+                                    placeholder="What's on your mind?" required
+                                    rows={5}
+                                    className={`${inputCls} flex-1 resize-none`}
                                 />
                             </div>
 
-                            {/* Submit row */}
                             <div className="flex flex-wrap items-center gap-3">
                                 <button
                                     type="submit"
@@ -174,7 +161,7 @@ export default function Socials() {
                             {status === 'success' && (
                                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl
                                                 bg-green-500/10 border border-green-500/20
-                                                text-green-600 dark:text-green-400 text-sm font-medium">
+                                                text-green-700 dark:text-green-400 text-sm font-medium">
                                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                                     Thanks! I'll get back to you soon.
                                 </div>
@@ -183,14 +170,14 @@ export default function Socials() {
                     </div>
 
                     {/* ══ RIGHT: Social links ══ */}
-                    <div className="glass rounded-3xl border border-white/40 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col">
+                    <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-[#0F2854]/12 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col">
                         {/* Card header */}
                         <div className="flex items-center gap-3 px-6 py-4
-                                        border-b border-white/20 dark:border-white/8
+                                        border-b border-[#0F2854]/8 dark:border-white/8
                                         bg-gradient-to-r from-[#93C5FD]/5 via-transparent to-[#0F2854]/5">
                             <span className="flex items-center justify-center w-8 h-8 rounded-full
                                              bg-[#0F2854]/10 dark:bg-[#93C5FD]/10
-                                             border border-white/30 dark:border-white/10">
+                                             border border-[#0F2854]/15 dark:border-white/10">
                                 <ExternalLink className="w-4 h-4 text-[#0F2854] dark:text-[#93C5FD]" />
                             </span>
                             <div>
@@ -209,19 +196,18 @@ export default function Socials() {
                                     rel="noopener noreferrer"
                                     className="flex items-center justify-between
                                                px-5 py-4 rounded-2xl
-                                               bg-white/10 dark:bg-white/5
-                                               border border-white/30 dark:border-white/10
-                                               hover:bg-white/20 dark:hover:bg-white/10
-                                               hover:border-[#0F2854]/20 dark:hover:border-[#93C5FD]/25
+                                               bg-white/60 dark:bg-white/5
+                                               border border-[#0F2854]/12 dark:border-white/10
+                                               hover:bg-[#0F2854]/5 dark:hover:bg-white/10
+                                               hover:border-[#0F2854]/25 dark:hover:border-[#93C5FD]/25
                                                hover:scale-[1.02] hover:shadow-lg
                                                transition-all duration-300 group"
                                 >
                                     <div className="flex items-center gap-4">
-                                        {/* Icon circle */}
                                         <span className="flex items-center justify-center w-10 h-10 rounded-full
                                                          bg-[#0F2854]/8 dark:bg-white/8
-                                                         border border-white/20 dark:border-white/10
-                                                         text-[#0F2854]/60 dark:text-white/50
+                                                         border border-[#0F2854]/15 dark:border-white/10
+                                                         text-[#0F2854]/70 dark:text-white/50
                                                          group-hover:bg-[#0F2854] dark:group-hover:bg-[#93C5FD]/20
                                                          group-hover:text-white dark:group-hover:text-[#93C5FD]
                                                          group-hover:border-[#0F2854]/50 dark:group-hover:border-[#93C5FD]/30
@@ -230,14 +216,14 @@ export default function Socials() {
                                         </span>
                                         <div>
                                             <p className="text-sm font-heading font-semibold
-                                                          text-foreground group-hover:text-[#0F2854] dark:group-hover:text-[#93C5FD]
+                                                          text-[#0F2854] dark:text-foreground group-hover:text-[#0F2854] dark:group-hover:text-[#93C5FD]
                                                           transition-colors duration-300">
                                                 {social.name}
                                             </p>
                                             <p className="text-xs text-foreground/45">{social.handle}</p>
                                         </div>
                                     </div>
-                                    <ExternalLink className="w-4 h-4 text-foreground/30
+                                    <ExternalLink className="w-4 h-4 text-[#0F2854]/30 dark:text-foreground/30
                                                              group-hover:text-[#0F2854] dark:group-hover:text-[#93C5FD]
                                                              group-hover:translate-x-0.5 group-hover:-translate-y-0.5
                                                              transition-all duration-300" />
