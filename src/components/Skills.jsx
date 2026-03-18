@@ -1,5 +1,6 @@
 /* ─── Skills.jsx — Categorised with animated tab filter ────────── */
 import { useState } from 'react';
+import { Sparkles, Code, Palette, Cpu, Database, Rocket } from 'lucide-react';
 
 const SKILLS = [
     // Programming
@@ -34,12 +35,12 @@ const SKILLS = [
 ];
 
 const CATEGORIES = [
-    { id: 'All', label: 'All', emoji: '⚡' },
-    { id: 'Programming', label: 'Programming', emoji: '{ }' },
-    { id: 'Frontend', label: 'Frontend', emoji: '🎨' },
-    { id: 'Backend', label: 'Backend', emoji: '⚙️' },
-    { id: 'Database', label: 'Database', emoji: '🗄️' },
-    { id: 'DevOps', label: 'DevOps', emoji: '🚀' },
+    { id: 'All', label: 'All', icon: Sparkles },
+    { id: 'Programming', label: 'Programming', icon: Code },
+    { id: 'Frontend', label: 'Frontend', icon: Palette },
+    { id: 'Backend', label: 'Backend', icon: Cpu },
+    { id: 'Database', label: 'Database', icon: Database },
+    { id: 'DevOps', label: 'DevOps', icon: Rocket },
 ];
 
 function SkillCard({ skill, index }) {
@@ -119,28 +120,47 @@ export default function Skills() {
           transition: all 0.25s ease;
           white-space: nowrap;
         }
+
+        /* ── Light mode (default) ── */
         .tab-pill.inactive {
-          background: transparent;
-          border-color: rgba(255,255,255,0.1);
-          color: rgba(255,255,255,0.45);
+          background: rgba(15,40,84,0.08);
+          border-color: rgba(15,40,84,0.25);
+          color: rgba(15,40,84,0.75);
         }
         .tab-pill.inactive:hover {
-          border-color: rgba(147,197,253,0.4);
-          color: rgba(147,197,253,0.8);
-          background: rgba(147,197,253,0.06);
+          border-color: rgba(15,40,84,0.6);
+          color: #0F2854;
+          background: rgba(15,40,84,0.15);
         }
         .tab-pill.active-tab {
+          background: linear-gradient(135deg, #0F2854 0%, #1a3a70 100%);
+          border-color: #0F2854;
+          color: #fff;
+          box-shadow: 0 4px 14px rgba(15,40,84,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* ── Dark mode (Tailwind class-based) ── */
+        .dark .tab-pill.inactive {
+          background: rgba(255,255,255,0.08);
+          border-color: rgba(255,255,255,0.2);
+          color: rgba(255,255,255,0.75);
+        }
+        .dark .tab-pill.inactive:hover {
+          border-color: rgba(147,197,253,0.7);
+          color: #93C5FD;
+          background: rgba(147,197,253,0.15);
+        }
+        .dark .tab-pill.active-tab {
           background: linear-gradient(135deg, #1e3a6e 0%, #0f2040 100%);
           border-color: rgba(147,197,253,0.5);
           color: #93C5FD;
           box-shadow: 0 0 16px rgba(147,197,253,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
         }
-        /* Light mode overrides */
-        @media (prefers-color-scheme: light) {
-          .tab-pill.inactive { border-color: rgba(15,40,84,0.15); color: rgba(15,40,84,0.5); }
-          .tab-pill.inactive:hover { border-color: rgba(15,40,84,0.4); color: #0F2854; background: rgba(15,40,84,0.05); }
-          .tab-pill.active-tab { background: linear-gradient(135deg,#0F2854,#1a3a70); color: #fff; border-color: #0F2854; box-shadow: 0 4px 14px rgba(15,40,84,0.3); }
+        .dark .count-badge {
+          background: rgba(147,197,253,0.15);
+          color: #93C5FD;
         }
+
         .skills-grid {
           display: flex;
           flex-wrap: wrap;
@@ -158,11 +178,8 @@ export default function Skills() {
           border-radius: 999px;
           font-size: 9px;
           font-weight: 600;
-          background: rgba(147,197,253,0.15);
-          color: #93C5FD;
-        }
-        @media (prefers-color-scheme: light) {
-          .count-badge { background: rgba(15,40,84,0.1); color: #0F2854; }
+          background: rgba(15,40,84,0.1);
+          color: #0F2854;
         }
       `}</style>
 
@@ -193,7 +210,7 @@ export default function Skills() {
                             onClick={() => setActive(cat.id)}
                             className={`tab-pill ${active === cat.id ? 'active-tab' : 'inactive'}`}
                         >
-                            <span style={{ fontSize: 13 }}>{cat.emoji}</span>
+                            <cat.icon size={14} className={active === cat.id ? 'text-current opacity-90' : 'text-current opacity-70'} />
                             {cat.label}
                             <span className="count-badge">{count}</span>
                         </button>
