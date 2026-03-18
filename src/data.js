@@ -19,11 +19,11 @@ export const socials = [
         url: "https://peerlist.io/anshmishra1414",
         handle: "Ansh",
     },
-    {
-        name: "Instagram",
-        url: "https://www.instagram.com/an.sh4639",
-        handle: "Ansh",
-    },
+    // {
+    //     name: "Instagram",
+    //     url: "https://www.instagram.com/an.sh4639",
+    //     handle: "Ansh",
+    // },
     // {
     //     name: "YouTube",
     //     url: "https://www.youtube.com/",
