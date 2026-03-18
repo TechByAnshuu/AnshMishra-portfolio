@@ -57,7 +57,7 @@ export default function MeetMe() {
 
                         {/* Resume button */}
                         <Link
-                            to="/resume"
+                            to="/view-resume"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-3 rounded-full glass border border-white/30 hover:bg-gradient-to-br hover:from-[#0F2854] hover:to-[#1e3a5f] dark:hover:bg-white/20 transition-all duration-300 hover:scale-110 group/icon relative"

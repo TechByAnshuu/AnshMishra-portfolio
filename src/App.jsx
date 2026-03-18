@@ -87,7 +87,7 @@ export default function App() {
                         <AllCertificationsPage />
                     </Suspense>
                 } />
-                <Route path="/resume" element={
+                <Route path="/view-resume" element={
                     <Suspense fallback={<Loading />}>
                         <ResumePage />
                     </Suspense>

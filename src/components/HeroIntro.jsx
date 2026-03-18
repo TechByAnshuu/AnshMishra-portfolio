@@ -316,7 +316,7 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
                   className="p-2.5 rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300 hover:scale-110 flex items-center justify-center text-white" aria-label="Email">
                   <Mail className="w-5 h-5 md:w-6 md:h-6" />
                 </a>
-                <Link to="/resume" target="_blank" rel="noopener noreferrer"
+                <Link to="/view-resume" target="_blank" rel="noopener noreferrer"
                   className="px-5 py-2.5 rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300 hover:scale-105 flex items-center gap-2.5 text-white font-mono text-xs md:text-sm font-medium tracking-wide" aria-label="View Resume">
                   <FileText className="w-4 h-4 md:w-5 md:h-5" />
                   <span>View Resume</span>
