@@ -1,16 +1,17 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Award, Trophy, Code2, GitMerge, Target, Server, ExternalLink } from 'lucide-react';
+import { Award, Trophy, Code2, GitMerge, Target, Server, ExternalLink, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { achievements } from '../data';
 
 /* ── Icon map ── */
 const iconMap = {
-    aws: Server,
-    docker: Server,
-    hackathon: Trophy,
-    opensource: GitMerge,
-    'leetcode-milestone': Target,
-    linux: Code2,
+    'aws-cloud': Server,
+    'oci-cloud': Server,
+    'oci-devops': GitMerge,
+    'crypto-nptel': Target,
+    'fcc-webdesign': Code2,
+    'udemy-webdev': Code2,
 };
 
 /* ── Type badge meta ── */
@@ -49,7 +50,7 @@ function AchievementCard({ item, index }) {
             />
 
             {/* Icon + type badge */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between z-10">
                 <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{
@@ -69,15 +70,37 @@ function AchievementCard({ item, index }) {
                 </span>
             </div>
 
+            {/* Certificate PDF Preview Thumbnail */}
+            {item.pdf && (
+                <div className="relative w-full h-36 mt-1 mb-2 rounded-lg overflow-hidden border border-white/10 group/pdf cursor-pointer z-10"
+                     onClick={() => window.open(item.pdf, '_blank')}
+                     title="Click to view full certificate">
+                    {/* The iframe serves as a visual thumbnail. Disable pointer events so it's just a thumbnail. */}
+                    <iframe 
+                        src={`${item.pdf}#toolbar=0&navpanes=0&scrollbar=0`}
+                        className="w-full h-[500px] border-none pointer-events-none origin-top-left"
+                        style={{ transform: 'scale(0.35)', width: '285%' }}
+                        title={`${item.title} Preview`}
+                    />
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-[#0F2854]/40 dark:bg-black/40 backdrop-blur-[2px] opacity-0 group-hover/pdf:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-xs font-medium backdrop-blur-md">
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            View PDF
+                        </span>
+                    </div>
+                </div>
+            )}
+
             {/* Text */}
-            <div className="flex-1 flex flex-col gap-1.5">
+            <div className="flex-1 flex flex-col gap-1.5 z-10">
                 <h3 className="text-[14px] font-heading font-semibold leading-snug text-[#0F2854] dark:text-[#93C5FD]">
                     {item.title}
                 </h3>
                 <p className="text-[11px] font-mono text-[#0F2854]/50 dark:text-white/40">
                     {item.issuer} · {item.year}
                 </p>
-                <p className="text-[13px] text-[#1A1A1A]/65 dark:text-white/60 leading-relaxed">
+                <p className="text-[13px] text-[#1A1A1A]/65 dark:text-white/60 leading-relaxed max-line-3">
                     {item.desc}
                 </p>
             </div>
@@ -109,12 +132,12 @@ function AchievementCard({ item, index }) {
 /* ──────────────────────────────────────
    Section export
 ────────────────────────────────────── */
-export default function Achievements() {
+export default function Certifications() {
     const headerRef = useRef(null);
     const headerInView = useInView(headerRef, { once: false, margin: '-60px' });
 
     return (
-        <section id="achievements" className="py-24 px-4 md:px-8 overflow-hidden">
+        <section id="certifications" className="py-24 px-4 md:px-8 overflow-hidden">
             <div className="max-w-5xl mx-auto">
 
                 <motion.div
@@ -128,19 +151,43 @@ export default function Achievements() {
                         Recognition
                     </p>
                     <h2 className="text-4xl md:text-6xl font-heading font-semibold text-[#0F2854] dark:text-[#93C5FD]">
-                        Achievements
+                        Certifications
                     </h2>
                     <p className="mt-4 text-base text-[#1A1A1A]/60 dark:text-white/55 max-w-lg mx-auto leading-relaxed">
-                        Certifications, hackathons, open-source, and milestones from my developer journey.
+                        Industry certifications, hackathons, open-source milestones, and achievements from my developer journey.
                     </p>
                     <div className="mt-5 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-[#0F2854]/60 to-[#93C5FD]/60" />
                 </motion.div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {achievements.map((item, i) => (
+                    {achievements.slice(0, 6).map((item, i) => (
                         <AchievementCard key={item.id} item={item} index={i} />
                     ))}
                 </div>
+
+                {/* View All Button */}
+                {achievements.length > 6 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-50px' }}
+                        className="mt-16 flex justify-center"
+                    >
+                        <Link
+                            to="/certifications"
+                            onClick={() => window.scrollTo(0, 0)}
+                            className="group relative flex items-center justify-center gap-3 px-8 py-3.5 
+                                       bg-[#0F2854] dark:bg-[#93C5FD]
+                                       text-white dark:text-[#0F2854]
+                                       rounded-full font-mono text-sm tracking-wide font-medium
+                                       hover:shadow-[0_0_24px_rgba(15,40,84,0.4)] dark:hover:shadow-[0_0_24px_rgba(147,197,253,0.4)]
+                                       hover:-translate-y-1 transition-all duration-300"
+                        >
+                            <span>View all certifications</span>
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+                        </Link>
+                    </motion.div>
+                )}
             </div>
         </section>
     );

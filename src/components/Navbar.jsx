@@ -5,13 +5,14 @@ import { useTheme } from '../ThemeContext';
 
 /* ── Nav items ── */
 const NAV_ITEMS = [
-    { label: 'About Me', id: 'meet-me' },
+    { label: 'Home', id: 'hero' },
+    { label: 'About', id: 'about' },
     { label: 'Skills', id: 'skills' },
     { label: 'Education', id: 'education' },
     { label: 'Projects', id: 'projects' },
     { label: 'Experience', id: 'experience' },
     { label: 'Activity', id: 'coding-activity' },
-    { label: 'Achievements', id: 'achievements' },
+    { label: 'Certifications', id: 'certifications' },
     { label: 'Socials', id: 'socials' },
 ];
 
@@ -40,7 +41,7 @@ function ScrollProgressBar() {
    — IntersectionObserver handles passive scroll tracking
 ────────────────────────────────────── */
 function useActiveSection() {
-    const [active, setActive] = useState('meet-me');
+    const [active, setActive] = useState('hero');
     // Lock prevents observer overriding a user-clicked selection mid-scroll
     const locked = useRef(false);
     const lockTimer = useRef(null);
@@ -229,7 +230,7 @@ export default function Navbar() {
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
                 className={`
                     fixed top-0 left-0 right-0 z-[100]
-                    hidden md:flex items-center justify-end gap-7
+                    hidden md:flex items-center justify-between
                     px-10 h-14
                     transition-all duration-400
                     ${scrolled
@@ -238,21 +239,39 @@ export default function Navbar() {
                     }
                 `}
             >
-                {NAV_ITEMS.map(item => (
-                    <NavLink key={item.id} item={item} active={active} onClick={(id) => { setActiveOnClick(id); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} />
-                ))}
+                {/* Logo on the left */}
+                <img
+                    src="/logo.png"
+                    alt="Logo"
+                    className="h-9 w-auto object-contain cursor-pointer transition-transform hover:scale-105 invert dark:invert-0"
+                    onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                />
 
-                {/* Divider */}
-                <span className="h-4 w-px bg-[#0F2854]/15 dark:bg-white/12" />
+                <div className="flex items-center gap-7">
+                    {NAV_ITEMS.map(item => (
+                        <NavLink key={item.id} item={item} active={active} onClick={(id) => { setActiveOnClick(id); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} />
+                    ))}
 
-                {/* Theme toggle — lives here now */}
-                <ThemeBtn />
+                    {/* Divider */}
+                    <span className="h-4 w-px bg-[#0F2854]/15 dark:bg-white/12" />
+
+                    {/* Theme toggle — lives here now */}
+                    <ThemeBtn />
+                </div>
             </motion.header>
 
             {/* ── Mobile bar ── */}
-            <div className="md:hidden fixed top-0 left-0 right-0 z-[100] flex items-center justify-end px-4 h-12
+            <div className="md:hidden fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 h-12
                             bg-white/70 dark:bg-black/55 backdrop-blur-xl
                             border-b border-[#0F2854]/8 dark:border-white/8">
+                {/* Logo on the left */}
+                <img
+                    src="/logo.png"
+                    alt="Logo"
+                    className="h-8 w-auto object-contain cursor-pointer invert dark:invert-0"
+                    onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                />
+
                 <div className="flex items-center gap-3">
                     <ThemeBtn />
                     <button

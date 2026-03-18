@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 export default function MeetMe() {
     return (
-        <section id="meet-me" className="min-h-screen flex items-center justify-center px-4 py-20 md:p-8 pt-20 md:pt-8">
-            <div className="max-w-4xl w-full">
-                <div className="glass rounded-3xl p-6 md:p-12 space-y-6 border border-white/40 dark:border-white/10 shadow-xl">
+        <section id="about" className="flex items-center justify-center px-4 py-8 md:px-8 lg:py-16 xl:px-16 relative z-20">
+            <div className="max-w-6xl w-full">
+                <div className="glass rounded-3xl p-6 md:p-12 lg:p-16 space-y-8 border border-white/40 dark:border-white/10 shadow-xl">
                     <div className="space-y-4">
-                        <h2 className="text-sm uppercase tracking-widest text-foreground/60 font-sans font-medium">
-                            About Me
+                        <h2 className="text-sm uppercase tracking-widest text-[#0F2854]/60 dark:text-white/60 font-sans font-medium">
+                            {/* About Me */}
                         </h2>
                         <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-semibold text-[#0F2854] dark:text-[#93C5FD] leading-tight break-words">
                             {intro.name}
@@ -22,9 +22,11 @@ export default function MeetMe() {
                         </div>
                     </div>
 
-                    <p className="text-base md:text-lg text-foreground/70 font-sans font-normal leading-relaxed tracking-wide max-w-2xl">
-                        {intro.description}
-                    </p>
+                    <div className="text-base md:text-lg lg:text-[19px] text-foreground/75 font-sans font-normal leading-relaxed tracking-wide max-w-5xl space-y-4">
+                        {intro.description.split('\n\n').map((paragraph, idx) => (
+                            <p key={idx}>{paragraph}</p>
+                        ))}
+                    </div>
 
                     <div className="flex gap-4 pt-4">
                         <a

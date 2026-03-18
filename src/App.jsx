@@ -6,18 +6,20 @@ import Loading from './components/Loading';
 import Controller from './components/Controller';
 import MeetMe from './components/MeetMe';
 import Navbar from './components/Navbar';
+// HeroIntro is the LANDING PAGE — import eagerly so it's never behind a lazy boundary
+import HeroIntro from './components/HeroIntro';
 
-// Heavy sections — lazy loaded for fast initial paint
+// Remaining heavy sections — lazy loaded for fast initial paint
 const LiquidEther = lazy(() => import('./components/LiquidEther'));
-const HeroIntro = lazy(() => import('./components/HeroIntro'));
 const Skills = lazy(() => import('./components/Skills'));
 const Education = lazy(() => import('./components/Education'));
 const Projects = lazy(() => import('./components/Projects'));
 const Experience = lazy(() => import('./components/Experience'));
 const CodingActivity = lazy(() => import('./components/CodingActivity'));
-const Achievements = lazy(() => import('./components/Achievements'));
+const Certifications = lazy(() => import('./components/Certifications'));
 const Socials = lazy(() => import('./components/Socials'));
 const AllProjectsPage = lazy(() => import('./pages/AllProjects'));
+const AllCertificationsPage = lazy(() => import('./pages/AllCertifications'));
 const ResumePage = lazy(() => import('./pages/Resume'));
 
 function AppContent() {
@@ -53,15 +55,16 @@ function AppContent() {
 
             {/* NOTE: NO overflow-hidden here — it would break position:sticky inside HeroIntro */}
             <main className="relative z-10">
+                {/* HeroIntro is the LANDING PAGE — first thing visitors see */}
+                <HeroIntro photoSrc="/photo.jpg" />
                 <MeetMe />
                 <Suspense fallback={<Loading />}>
-                    <HeroIntro photoSrc="/ansh.jpg" />
                     <Skills />
                     <Education />
                     <Projects />
                     <Experience />
                     <CodingActivity />
-                    <Achievements />
+                    <Certifications />
                     <Socials />
                 </Suspense>
             </main>
@@ -77,6 +80,11 @@ export default function App() {
                 <Route path="/projects" element={
                     <Suspense fallback={<Loading />}>
                         <AllProjectsPage />
+                    </Suspense>
+                } />
+                <Route path="/certifications" element={
+                    <Suspense fallback={<Loading />}>
+                        <AllCertificationsPage />
                     </Suspense>
                 } />
                 <Route path="/resume" element={

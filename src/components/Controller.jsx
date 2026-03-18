@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 
 const sections = [
-    { id: 'meet-me', label: 'About Me' },
+    { id: 'hero', label: 'Home' },
+    { id: 'about', label: 'About' },
     { id: 'skills', label: 'Skills' },
     { id: 'education', label: 'Education' },
     { id: 'projects', label: 'Projects' },
     { id: 'experience', label: 'Experience' },
     { id: 'coding-activity', label: 'Activity' },
-    { id: 'achievements', label: 'Achievements' },
+    { id: 'certifications', label: 'Certifications' },
     { id: 'socials', label: 'Contact' },
 ];
 
 export default function Controller() {
-    const [activeSection, setActiveSection] = useState('meet-me');
+    const [activeSection, setActiveSection] = useState('hero');
 
     useEffect(() => {
         const handleHashChange = () => {
-            const hash = window.location.hash.replace('#', '') || 'meet-me';
+            const hash = window.location.hash.replace('#', '') || 'hero';
             setActiveSection(hash);
         };
 
