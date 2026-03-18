@@ -67,7 +67,7 @@
 
 /* Glassmorphism utility */
 .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    @apply bg-white/30 backdrop-blur-md border border-white/20;
 }
 
 .dark .glass {
