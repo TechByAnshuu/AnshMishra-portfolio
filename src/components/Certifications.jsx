@@ -165,8 +165,8 @@ export default function Certifications() {
                     ))}
                 </div>
 
-                {/* View All Button */}
-                {achievements.length > 6 && (
+                {/* View All Button — always visible if 6 or more items */}
+                {achievements.length >= 6 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -176,15 +176,19 @@ export default function Certifications() {
                         <Link
                             to="/certifications"
                             onClick={() => window.scrollTo(0, 0)}
-                            className="group relative flex items-center justify-center gap-3 px-8 py-3.5 
-                                       bg-[#0F2854] dark:bg-[#93C5FD]
-                                       text-white dark:text-[#0F2854]
-                                       rounded-full font-mono text-sm tracking-wide font-medium
-                                       hover:shadow-[0_0_24px_rgba(15,40,84,0.4)] dark:hover:shadow-[0_0_24px_rgba(147,197,253,0.4)]
-                                       hover:-translate-y-1 transition-all duration-300"
+                            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full
+                                       overflow-hidden
+                                       border border-[#0F2854]/30 dark:border-[#93C5FD]/25
+                                       text-[#0F2854] dark:text-[#93C5FD]
+                                       font-semibold text-base tracking-wide
+                                       hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#0F2854]/15 dark:hover:shadow-[#93C5FD]/10
+                                       transition-all duration-400"
                         >
-                            <span>View all certifications</span>
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+                            <span className="absolute inset-0 bg-[#0F2854] dark:bg-[#93C5FD]/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-400 ease-out rounded-full" />
+                            <span className="relative z-10 group-hover:text-white dark:group-hover:text-white transition-colors duration-300 font-mono text-sm tracking-wide font-medium">
+                                View all certifications
+                            </span>
+                            <ArrowRight className="relative z-10 w-4 h-4 group-hover:text-white dark:group-hover:text-white group-hover:translate-x-1.5 transition-all duration-300" />
                         </Link>
                     </motion.div>
                 )}
