@@ -6,7 +6,9 @@
  * PHASE 3  p:0.55→0.75  Border-radius melts: circle becomes left panel (50vw×100vh).
  * PHASE 4  p:0.68→1.00  Terminal card slides in from right.
  *                        Photo shrinks to arch shape, 30% height, centered in left panel.
- *                        ── NEW: dark rounded frame wraps photo in Phase 4 ──
+ *
+ * MOBILE:  Simplified static layout — photo centered, name above/below, icons below.
+ *          No scroll animation phases on mobile (too short to scroll 500vh).
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -53,8 +55,8 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
   const secRef = useRef(null);
   const circleRef = useRef(null);
   const photoRef = useRef(null);
-  const frameRef = useRef(null);   // ← NEW: the dark portrait frame
-  const decorRef = useRef(null);   // ← NEW: decoration wrapper inside frame
+  const frameRef = useRef(null);
+  const decorRef = useRef(null);
   const glowRef = useRef(null);
   const spinRef = useRef(null);
   const bgRef = useRef(null);
@@ -64,8 +66,20 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
   const lineRefs = useRef([]);
   const raf = useRef(null);
   const [photoErr, setPhotoErr] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  /* ── Detect mobile ── */
   useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  /* ── Desktop scroll animation (unchanged) ── */
+  useEffect(() => {
+    if (isMobile) return; // skip on mobile
+
     const tick = () => {
       raf.current = null;
       const sec = secRef.current;
@@ -115,10 +129,8 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
       set(bgRef.current, { opacity: 1 - rr(p, 0, 0.28) });
       set(hintRef.current, { opacity: 1 - rr(p, 0, 0.08) });
 
-      /* ── PHASE 4 progress ── */
       const p4 = rr(p, 0.68, 1.0);
 
-      /* ── Photo shrinks inside the frame ── */
       const frameH = p < 0.68 ? "100%" : `${lx(100, 85, p4)}%`;
       const frameW = p < 0.68 ? "100%" : "auto";
       const framePad = p < 0.68 ? 0 : lx(0, 24, p4);
@@ -135,9 +147,7 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
       });
 
       const frameProg = rr(p, 0.72, 1.0);
-      if (decorRef.current) {
-        set(decorRef.current, { opacity: frameProg });
-      }
+      if (decorRef.current) set(decorRef.current, { opacity: frameProg });
 
       set(photoRef.current, {
         height: "100%",
@@ -148,7 +158,6 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
         flexShrink: 0,
       });
 
-      /* ── Terminal card slides in ── */
       const tp = rr(p, 0.68, 0.92);
       set(termRef.current, {
         opacity: tp,
@@ -156,7 +165,6 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
         pointerEvents: tp > 0.05 ? "auto" : "none",
       });
 
-      /* ── Code lines stagger ── */
       const cp = rr(p, 0.72, 1.0);
       lineRefs.current.forEach((el, i) => {
         if (!el) return;
@@ -172,6 +180,7 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     requestAnimationFrame(tick);
+
     const t = setTimeout(tick, 150);
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -179,7 +188,7 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
       if (raf.current) cancelAnimationFrame(raf.current);
       clearTimeout(t);
     };
-  }, []);
+  }, [isMobile, dark]);
 
   const eclipseGlow = dark ? `
     0 0 0 1px rgba(200,170,255,.95),
@@ -205,6 +214,276 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
     0 0 150px 60px rgba(${accRgb},.14)
   `;
 
+  /* ══════════════════════════════════════
+     MOBILE LAYOUT — clean, no scroll anim
+  ══════════════════════════════════════ */
+  if (isMobile) {
+    return (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,400&family=DM+Sans:wght@200;300;400&family=JetBrains+Mono:wght@300;400&display=swap"
+          rel="stylesheet"
+        />
+        <style>{`
+          @keyframes hi-eclipse {
+            0%,100% { box-shadow: ${eclipseGlow}; }
+            50%     { box-shadow: ${eclipsePulse}; }
+          }
+          @keyframes hi-spin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+          @keyframes hi-bounce  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+          @keyframes hi-blink   { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+          @keyframes hi-fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+          .hi-eclipse { animation: hi-eclipse 3.5s ease-in-out infinite; }
+          .hi-spin    { animation: hi-spin 18s linear infinite; }
+          .hi-mobile-fade { animation: hi-fade-up 0.7s ease-out both; }
+        `}</style>
+
+        <section
+          id="hero"
+          style={{
+            position: "relative",
+            minHeight: "100svh",
+            background: bg,
+            zIndex: 10,
+            isolation: "isolate",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingTop: "72px",   /* navbar height */
+            paddingBottom: "40px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+            gap: "28px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Background vignette */}
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
+            background: dark
+              ? "radial-gradient(ellipse at 50% 40%,rgba(0,0,0,0) 20%,rgba(0,0,0,.6) 80%)"
+              : "radial-gradient(ellipse at 50% 40%,rgba(240,240,245,0) 20%,rgba(240,240,245,.7) 80%)",
+          }} />
+
+          {/* ── "hello, I'm" tagline ── */}
+          <div
+            className="hi-mobile-fade"
+            style={{ animationDelay: "0.1s", zIndex: 2, textAlign: "center" }}
+          >
+            <span style={{
+              fontFamily: "'Playfair Display',serif",
+              fontStyle: "italic",
+              fontSize: "1rem",
+              color: dark ? "rgba(255,255,255,.55)" : "rgba(15,40,84,.55)",
+              letterSpacing: ".02em",
+            }}>hello, I'm</span>
+          </div>
+
+          {/* ── Photo circle ── */}
+          <div
+            className="hi-mobile-fade hi-eclipse"
+            style={{
+              animationDelay: "0.2s",
+              zIndex: 2,
+              width: "62vmin",
+              height: "62vmin",
+              borderRadius: "50%",
+              overflow: "hidden",
+              flexShrink: 0,
+              position: "relative",
+            }}
+          >
+            {/* Rotating text ring */}
+            <div
+              className="hi-spin"
+              style={{
+                position: "absolute", inset: "-12px",
+                zIndex: 11, pointerEvents: "none",
+              }}
+            >
+              <svg viewBox="0 0 300 300" style={{ width: "100%", height: "100%" }} xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <path id="rp-m" d="M 150,150 m -125,0 a 125,125 0 1,1 250,0 a 125,125 0 1,1 -250,0" />
+                </defs>
+                <text fontFamily="DM Sans,sans-serif" fontSize="10.5" fontWeight="300" letterSpacing="3.2"
+                  fill={dark ? "rgba(255,255,255,.35)" : "rgba(15,40,84,.35)"}>
+                  <textPath href="#rp-m">
+                    Hello · Full Stack &amp; Cloud Developer · Available to work · Ansh Mishra · &nbsp;&nbsp;&nbsp;&nbsp;
+                  </textPath>
+                </text>
+              </svg>
+            </div>
+
+            {!photoErr ? (
+              <img
+                src={photoSrc}
+                alt="Ansh Mishra"
+                style={{
+                  width: "100%", height: "100%",
+                  objectFit: "cover", objectPosition: "center top",
+                  filter: "contrast(1.08) brightness(0.95)",
+                  display: "block",
+                }}
+                onError={() => setPhotoErr(true)}
+              />
+            ) : (
+              <div style={{
+                width: "100%", height: "100%",
+                background: "linear-gradient(160deg,#0d0020,#050d1f)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg viewBox="0 0 160 280" style={{ height: "80%", width: "auto" }} xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="80" cy="90" r="34" fill="rgba(255,220,180,.85)" />
+                  <ellipse cx="80" cy="200" rx="32" ry="50" fill={`rgba(${accRgb},.18)`} />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          {/* ── Name ── */}
+          <div
+            className="hi-mobile-fade"
+            style={{
+              animationDelay: "0.3s",
+              zIndex: 2,
+              textAlign: "center",
+              fontFamily: "'Playfair Display',serif",
+              lineHeight: 1,
+              userSelect: "none",
+            }}
+          >
+            <div style={{
+              fontSize: "clamp(3.2rem, 16vw, 5.5rem)",
+              fontWeight: 900,
+              letterSpacing: "-.02em",
+              color: dark ? "#ffffff" : "#0F2854",
+            }}>
+              Ansh Mishra
+            </div>
+            <div style={{
+              marginTop: "10px",
+              fontFamily: "'DM Sans',sans-serif",
+              fontWeight: 300,
+              fontSize: "clamp(.7rem, 3.5vw, .95rem)",
+              letterSpacing: ".3em",
+              textTransform: "uppercase",
+              color: dark ? "rgba(255,255,255,.4)" : "rgba(15,40,84,.4)",
+            }}>
+              Full Stack &amp; Cloud Developer
+            </div>
+          </div>
+
+          {/* ── Social icons + Resume button ── */}
+          <div
+            className="hi-mobile-fade"
+            style={{
+              animationDelay: "0.45s",
+              zIndex: 2,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "12px",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <a href="https://github.com/TechByAnshuu" target="_blank" rel="noopener noreferrer"
+              style={{
+                padding: "10px", borderRadius: "50%",
+                border: dark ? "1px solid rgba(255,255,255,.2)" : "1px solid rgba(15,40,84,.2)",
+                color: dark ? "#ffffff" : "#0F2854",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: dark ? "rgba(255,255,255,.05)" : "rgba(15,40,84,.05)",
+                transition: "all .3s",
+              }}
+              aria-label="GitHub">
+              <Github size={20} />
+            </a>
+            <a href="https://www.linkedin.com/in/ansh-mishra-dev/" target="_blank" rel="noopener noreferrer"
+              style={{
+                padding: "10px", borderRadius: "50%",
+                border: dark ? "1px solid rgba(255,255,255,.2)" : "1px solid rgba(15,40,84,.2)",
+                color: dark ? "#ffffff" : "#0F2854",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: dark ? "rgba(255,255,255,.05)" : "rgba(15,40,84,.05)",
+                transition: "all .3s",
+              }}
+              aria-label="LinkedIn">
+              <Linkedin size={20} />
+            </a>
+            <a href="mailto:anshmishra14.14@gmail.com"
+              style={{
+                padding: "10px", borderRadius: "50%",
+                border: dark ? "1px solid rgba(255,255,255,.2)" : "1px solid rgba(15,40,84,.2)",
+                color: dark ? "#ffffff" : "#0F2854",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: dark ? "rgba(255,255,255,.05)" : "rgba(15,40,84,.05)",
+                transition: "all .3s",
+              }}
+              aria-label="Email">
+              <Mail size={20} />
+            </a>
+            <Link to="/view-resume" target="_blank" rel="noopener noreferrer"
+              style={{
+                padding: "10px 20px", borderRadius: "999px",
+                border: dark ? "1px solid rgba(255,255,255,.2)" : "1px solid rgba(15,40,84,.25)",
+                color: dark ? "#ffffff" : "#0F2854",
+                display: "flex", alignItems: "center", gap: "8px",
+                background: dark ? "rgba(255,255,255,.05)" : "rgba(15,40,84,.06)",
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: "12px", fontWeight: 500,
+                letterSpacing: ".06em",
+                transition: "all .3s",
+              }}
+              aria-label="View Resume">
+              <FileText size={16} />
+              <span>View Resume</span>
+            </Link>
+          </div>
+
+          {/* ── Scroll hint ── */}
+          <div
+            className="hi-mobile-fade"
+            style={{
+              animationDelay: "0.6s",
+              zIndex: 2,
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+              marginTop: "8px",
+            }}
+          >
+            <span style={{
+              fontFamily: "'DM Sans',sans-serif", fontSize: "8px",
+              fontWeight: 300, letterSpacing: ".32em", textTransform: "uppercase",
+              color: dark ? "rgba(255,255,255,.25)" : "rgba(15,40,84,.25)",
+            }}>Scroll Down</span>
+            <div className="hi-bounce" style={{
+              width: "1px", height: "32px",
+              background: `linear-gradient(to bottom,rgba(${accRgb},.5),transparent)`,
+            }} />
+          </div>
+
+          {/* Aspiring tagline at bottom */}
+          <div style={{
+            position: "absolute", bottom: "16px", left: 0, right: 0,
+            textAlign: "center", zIndex: 2,
+            fontFamily: "'DM Sans',sans-serif",
+            fontSize: "clamp(.52rem,.65vw,.7rem)",
+            fontWeight: 200, letterSpacing: ".38em",
+            textTransform: "uppercase",
+            color: dark ? "rgba(255,255,255,.2)" : "rgba(15,40,84,.2)",
+          }}>
+            Aspiring Full Stack &amp; Cloud Developer
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  /* ══════════════════════════════════════
+     DESKTOP LAYOUT — original scroll anim
+  ══════════════════════════════════════ */
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -222,11 +501,6 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
         @keyframes hi-bounce  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
         @keyframes hi-scan    { 0%{top:0%;opacity:0} 5%,95%{opacity:.05} 100%{top:100%;opacity:0} }
         @keyframes hi-blink   { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-        .hi-eclipse { animation: hi-eclipse 3.5s ease-in-out infinite; }
-        .hi-spin    { animation: hi-spin 18s linear infinite; }
-        .hi-bounce  { animation: hi-bounce 2s ease-in-out infinite; }
-        .hi-scan    { animation: hi-scan 8s linear infinite; }
-        .hi-blink   { animation: hi-blink 1s step-end infinite; }
 
         @keyframes hi-glitch-r {
           0%,90%,100% { clip-path:inset(0 0 100% 0); transform:translate(0); }
@@ -248,12 +522,15 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
           0%   { transform: translateY(-100%); }
           100% { transform: translateY(100vh); }
         }
-
-        /* ── Portrait frame shimmer ── */
         @keyframes hi-frame-shimmer {
           0%   { background-position: -200% center; }
           100% { background-position:  200% center; }
         }
+        .hi-eclipse { animation: hi-eclipse 3.5s ease-in-out infinite; }
+        .hi-spin    { animation: hi-spin 18s linear infinite; }
+        .hi-bounce  { animation: hi-bounce 2s ease-in-out infinite; }
+        .hi-scan    { animation: hi-scan 8s linear infinite; }
+        .hi-blink   { animation: hi-blink 1s step-end infinite; }
       `}</style>
 
       <section
@@ -333,6 +610,7 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
                 lineHeight: 1, letterSpacing: "-.02em", color: "#ffffff",
               }}>Mishra</div>
             </div>
+
             <div style={{
               position: "absolute", bottom: "8%", left: "50%",
               transform: "translateX(-50%)",
@@ -379,11 +657,6 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
               ].join(", "),
             }}
           >
-
-            {/* ════════════════════════════════════════════
-                DARK PORTRAIT FRAME  (Phase 4 only)
-                — dynamically conforms to the photo size!
-                ════════════════════════════════════════════ */}
             <div
               ref={frameRef}
               style={{
@@ -398,19 +671,12 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
               }}
             >
               <div ref={decorRef} style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0, borderRadius: "inherit", overflow: "hidden", zIndex: 1 }}>
-                {/* top shimmer line — like a glossy card */}
                 <div style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "1px",
+                  position: "absolute", top: 0, left: 0, right: 0, height: "1px",
                   background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 30%, rgba(255,255,255,0.32) 50%, rgba(255,255,255,0.18) 70%, transparent 100%)",
                   backgroundSize: "200% 100%",
                   animation: "hi-frame-shimmer 4s ease-in-out infinite",
                 }} />
-
-                {/* corner accent dots — like the screenshot frame detail */}
                 {[
                   { top: "12px", left: "12px" },
                   { top: "12px", right: "12px" },
@@ -418,17 +684,14 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
                   { bottom: "12px", right: "12px" },
                 ].map((pos, i) => (
                   <div key={i} style={{
-                    position: "absolute",
-                    ...pos,
-                    width: "5px",
-                    height: "5px",
+                    position: "absolute", ...pos,
+                    width: "5px", height: "5px",
                     borderRadius: "50%",
                     background: "rgba(255,255,255,0.12)",
                   }} />
                 ))}
               </div>
 
-              {/* ── BASE PHOTO (sits above frame decorations, inside frame div, z:2) ── */}
               {!photoErr ? (
                 <img
                   ref={photoRef}
@@ -519,7 +782,6 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
               zIndex: 6, pointerEvents: "none",
               boxShadow: "inset 0 0 0 100vw rgba(30,100,255,.08)",
             }} />
-
           </div>
 
           {/* ── z:11 Rotating text ring ── */}
@@ -538,11 +800,8 @@ export default function HeroIntro({ photoSrc = "/photo.jpg" }) {
                 <defs>
                   <path id="rp" d="M 150,150 m -125,0 a 125,125 0 1,1 250,0 a 125,125 0 1,1 -250,0" />
                 </defs>
-                <text
-                  fontFamily="DM Sans,sans-serif" fontSize="10.5"
-                  fontWeight="300" letterSpacing="3.2"
-                  fill={dark ? "rgba(255,255,255,.38)" : "rgba(15,40,84,.38)"}
-                >
+                <text fontFamily="DM Sans,sans-serif" fontSize="10.5" fontWeight="300" letterSpacing="3.2"
+                  fill={dark ? "rgba(255,255,255,.38)" : "rgba(15,40,84,.38)"}>
                   <textPath href="#rp">
                     Hello · Full Stack &amp; Cloud Developer · Available to work · Ansh Mishra · &nbsp;&nbsp;&nbsp;&nbsp;
                   </textPath>
