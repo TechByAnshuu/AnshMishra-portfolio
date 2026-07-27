@@ -386,7 +386,7 @@ function EducationCard() {
                     {/* CGPA */}
                     <div className="text-center">
                         <p className="text-[9px] font-mono tracking-widest uppercase text-foreground/35 mb-0.5">CGPA</p>
-                        <p className="text-2xl font-heading font-semibold text-[#60A5FA] leading-none">7.54</p>
+                        <p className="text-2xl font-heading font-semibold text-[#60A5FA] leading-none">8.14</p>
                     </div>
 
                     <div className="w-px h-8 bg-white/10 flex-shrink-0" />
